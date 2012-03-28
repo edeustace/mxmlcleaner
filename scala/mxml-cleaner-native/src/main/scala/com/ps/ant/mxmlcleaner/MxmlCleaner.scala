@@ -37,13 +37,13 @@ class MxmlCleaner
    
    	def clean( fileString : String ) : String = 
     {
-		analyser = new MxmlAnalyser( fileString )
+		  analyser = new MxmlAnalyser( fileString )
      	
-		if( !needsCleaning( fileString ) )
-		{
-			return fileString
-		}
-		cleanNamespace( cleanImports( fileString ) )
+  		if( !needsCleaning( fileString ) )
+  		{
+  			return fileString
+  		}
+  		cleanNamespace( cleanImports( fileString ) )
     }
     
     def cleanNamespace( fileString : String ) : String = 

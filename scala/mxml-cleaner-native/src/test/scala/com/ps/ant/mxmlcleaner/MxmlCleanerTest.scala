@@ -12,6 +12,32 @@ class MxmlCleanerTest extends AnyRef with CleanerTest
 	val cleaner : MxmlCleaner = new MxmlCleaner()
 	
 	
+
+	@Test 
+	def sparkNamespacesArePreserved = 
+	{
+
+		val in = """<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+    xmlns:s="library://ns.adobe.com/flex/spark" 
+    xmlns:mx="library://ns.adobe.com/flex/mx" 
+    width="100%" height="100%">
+    <s:Rect width="100%" height="100%"/>
+</s:Group>"""
+
+		val out = cleaner.clean(in)
+
+		val expected = """<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+    xmlns:s="library://ns.adobe.com/flex/spark" 
+    xmlns:mx="library://ns.adobe.com/flex/mx" 
+    width="100%" height="100%">
+    <s:Rect width="100%" height="100%"/>
+</s:Group>"""
+
+    assertEquals( expected, out )
+
+	}
  	
 	@Test
 	def cleanWorks = 
@@ -22,6 +48,7 @@ class MxmlCleanerTest extends AnyRef with CleanerTest
 		assertCleanFile( "UnusedNamespaces.mxml" )
 		assertCleanFile( "ImageLinkView.mxml" )
 		assertCleanFile( "TwoPartCPRNumberInput.mxml" )
+		assertCleanFile( "SparkComponentWithSparkNamepsaces.mxml")
 	}
  	
  	@Test

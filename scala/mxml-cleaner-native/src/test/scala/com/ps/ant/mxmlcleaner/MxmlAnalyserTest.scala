@@ -85,6 +85,21 @@ class MxmlAnalyserTest
       assertUnusedNamespaces( "FoundIssues.mxml", 0, "combobox didn't work" )
       assertUnusedNamespaces( "CampaignsTest.mxml", 1, "combobox didn't work" )
     }
+
+    @Test
+    def getUnusedNamespacesIgnoresSparkNamespaces = 
+    {
+        val sparkMxml = """<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+    xmlns:s="library://ns.adobe.com/flex/spark" 
+    xmlns:mx="library://ns.adobe.com/flex/mx" 
+    width="100%" height="100%">
+    <s:Rect width="100%" height="100%"/>
+</s:Group>"""
+        val analyser = new MxmlAnalyser(sparkMxml)
+        assertEquals( 0, analyser.getUnusedNamespaces.length )
+
+    }
     
     @Test 
     def getUnusedImportsFromCodeWithMultipleScriptNodes =

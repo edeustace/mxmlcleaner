@@ -10,7 +10,9 @@ class MxmlAnalyser( val fileString : String )
 	extends AnyRef 
 	with MxmlParser
 {
-  	val ImportStatement = new Regex(""".*import (.*?)[;|\n]""")
+	val RESERVED_NAMESPACES = List("fx","s","mx","fb")
+
+ 	val ImportStatement = new Regex(""".*import (.*?)[;|\n]""")
 	
 	def hasUnusedImports() : Boolean = { getUnusedImports().length >= 1 }
 
@@ -39,23 +41,29 @@ class MxmlAnalyser( val fileString : String )
 	
 	def hasUnusedNamespaces() : Boolean = { getUnusedNamespaces.length >= 1 }
  
+ 	/**
+ 	 * Return the unused namespaces in a list eg: List('blah', 'blahblah')
+ 	 * Note: some key namespaces are ignored eg: fx, s, fb
+ 	 */
 	def getUnusedNamespaces() : List[String] = 
 	{
 		var unused : List[String] =  List[String]()
-    
-	   	val rootNode = getRootNode( fileString )
+    val rootNode = getRootNode( fileString )
 	   	
 		for( v <-  getNamespaces( rootNode ) )
 		{
-		   val count : Int = findNumberOfOccurrences( fileString, "<" + v + ":" )
-			if( count == 0 )
+			if( !RESERVED_NAMESPACES.contains(v) )
 			{
-				unused = v :: unused
+				val count : Int = findNumberOfOccurrences( fileString, "<" + v + ":" )
+				
+				if( count == 0 )
+				{
+					unused = v :: unused
+				}
 			}
 		}	
-	   unused
+	  unused
 	}
-	
 	
 	private def getClassName( fullName : String ) : String = { fullName.substring( fullName.lastIndexOf(".") + 1, fullName.length ) }
 	private def fileToString( file : File ) : String = { FileUtils.fileToString( file ) }

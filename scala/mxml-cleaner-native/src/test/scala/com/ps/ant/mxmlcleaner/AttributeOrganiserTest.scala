@@ -99,6 +99,12 @@ class AttributeOrganiserTest extends AnyRef with CleanerTest
 		assertOrganiseFile( "ContentPopup.mxml" )
 		assertOrganiseFile( "MxmlViewWithUnusedNamespaces.mxml" )
 	}
+
+	@Test
+	def organiseWorksWithSparkNamespaces = 
+	{
+		assertOrganiseFile( "SparkComponent.mxml")
+	}
  
  	@Test
  	def organiseArticle =
