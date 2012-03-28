@@ -3,14 +3,17 @@
 ##Introduction
 Some utilities for cleaning up mxml files.
 
-Originally hosted on [google code](http://code.google.com/p/mxmlcleaner/)
+Originally hosted on [google code](http://code.google.com/p/mxmlcleaner/).
+
 It can:
+
 * Remove unused imports
 * Organize the remaining imports in alphabetical order
 * Remove unused namespaces
 * Organize the namespaces (and remaining attributes)
 
 From:
+
     <mx:Canvas 
       xmlns:mx="http://www.adobe.com/2006/mxml" 
       creationComplete="init()"
@@ -33,6 +36,7 @@ From:
       <view:MenuView/>
     </mx:Canvas>
 To:
+
     <mx:Canvas 
       xmlns:mx="http://www.adobe.com/2006/mxml" 
       xmlns:view="com.test.common.view.*"
@@ -50,6 +54,7 @@ To:
         ]]>
       </mx:Script>
       <view:MenuView/>
+    
     </mx:Canvas>
 
 #Utilities
