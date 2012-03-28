@@ -57,24 +57,13 @@ To:
     
     </mx:Canvas>
 
-#Utilities
-###An eclipse plugin 
-This only organises namesapces (flash builder 4 will organise your imports for you).
-
-###An Ant Task
+##Ant Task
 This Task can be included in your automated build to keep your mxml clean
 
-###A ruby script
-Same as the Ant task, but you need to have ruby.
+###Source 
+is here: ```scala/mxmlcleaner-task```
 
-###Project
-There are 2 basic projects: A ruby project and a java project.
-The java project is an Ant Task project. It works but you need to add JRuby to your Ant classpath to get it working.
-Be sure to have a back up of your files before you execute the clean.
-
-#Usage
-
-##Ant Task
+###Usage
 
     <taskdef
         name="mxmlcleaner" 
@@ -88,18 +77,29 @@ Be sure to have a back up of your files before you execute the clean.
             sourcePath="${SRC_DIR}/"/>
     </target>
 
-
-##Ruby Script
+##Ruby script
+###Source
+```ruby/MxmlCleaner```
+###Usage
 To run the cleaner do the following:
 Requirements: Ruby 1.8.5 or higher
 
-1. Download the ruby project
-2. cd to the lib folder
-3. run: ruby main.rb ${the_path_to_a_folder_that_contains_mxml_files}
+    git clone git://github.com/edeustace/mxmlcleaner.git
+    cd mxmlcleaner/ruby/MxmlCleaner
+    ruby main.rb ${the_path_to_a_folder_that_contains_mxml_files}
+    #ruby main.rb C:\dev\my-project\src\main\flex
 
-eg:
 
-     ruby main.rb C:\dev\my-project\src\main\flex
+##Eclipse plugin (experimental)
+This only organises namesapces (flash builder 4 will organise your imports for you).
+
+##Project
+There are 2 basic projects: A ruby project and a java project.
+The java project is an Ant Task project. It works but you need to add JRuby to your Ant classpath to get it working.
+Be sure to have a back up of your files before you execute the clean.
+
+#Usage
+
 
 #Flash Builder
 Currently Flex Builder or Flash Builder doesn't provide this functionality. If they do eventually provide it, it is unknown if it will allow you to execute it in batch mode.
