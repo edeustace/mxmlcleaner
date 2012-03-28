@@ -1,0 +1,14 @@
+/*from: ../test/mock/stylestripper/simple/FileWithCss.mxml*/
+
+		.boxStyle{
+		
+		corner-radius:8;    
+		border-style:solid;    
+		border-thickness:2;
+		border-color:#ffffff; 
+		height:225; 
+		width:214;
+		vertical-scroll-policy:off; 
+			horizontal-scroll-policy:off; 
+		}
+	

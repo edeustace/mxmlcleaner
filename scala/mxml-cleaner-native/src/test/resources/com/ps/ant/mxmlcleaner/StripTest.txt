@@ -1,0 +1,6 @@
+xmlns:start="start.com.*"
+xmlns:pm="com.babab.bb.*"
+xmlns:wonder="wonder"
+creationComplete="hello"
+xmlns:test="test.test.*"
+xmlns:test2="test.test.*"

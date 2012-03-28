@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:view="com.test.common.view.*"
+	xmlns:pm="com.test.common.model.pm.*"
+	xmlns:controls="com.test.common.view.controls.*"
+	xmlns:injection="flicc.injection.*"
+	width="536"
+	creationComplete="{setMobilePlayPanel(region)}"
+	>
+	<mx:Metadata>
+        [ResourceBundle("Mobile")]
+    </mx:Metadata>
+	<mx:Script>
+		<![CDATA[
+			import assets.stylesheets.TextStyle;
+
+			import com.test.common.model.constants.TestRegions;
+			import com.test.common.model.content.news.MobileNewsTeaser;
+			import com.test.util.RegionSkinUtil;
+
+			private static const BUNDLE : String = "Mobile";
+
+			[Bindable]
+			private var _region : String;
+
+			[Bindable]
+			private var bottomSpace : Number = 16;
+
+			[Bindable]
+			private var canvasHeight : Number = 130;
+
+			[Bindable]
+			public function set region(value : String) : void
+			{
+				_region = value;
+				setCssStyle(value);
+				//setMobilePlayPanel(value);
+
+			}
+
+			public function get region() : String
+			{
+				return _region;
+			}
+
+			public function set mobileTeaser( value : MobileNewsTeaser ) : void
+			{
+				pm.teaser = value;
+
+			}
+
+			private function setMobilePlayPanel(value : String) : void
+			{
+
+					if(pm.teaser.subscribe)
+					{
+						pm.subscribeButtonVisible = true;
+					}
+					if(pm.teaser.play == true)
+					{
+						bottomSpace = 58;
+						canvasHeight = 175;
+						pm.subscribeButtonVisible = false;
+						var mobileGameLinkView : MobileGameLinkView = new MobileGameLinkView();
+						mobileGameLinkView.mobileLinkText = resourceManager.getString( BUNDLE, 'MOBILE_PLAY_TXT' );
+						mobileGameLinkView.region = value;
+						mobileGameLinkView.link = pm.teaser.subscribeLink;
+						mobileGameLinkView.textInputWidth = 150;
+						mobileGameLinkView.hBoxPaddingLeft = 116;
+						mobileGameContainer.addChild( DisplayObject( mobileGameLinkView ));
+					}
+
+			}
+
+			private function setCssStyle(hinduRegion : String) : void
+			{
+				switch(hinduRegion)
+				{
+					case TestRegions.ODDSET :
+						cssText.css = TextStyle.ODDSET_MOBILE_HEADER;
+						break;
+					case TestRegions.LOTTO :
+						cssText.css = TextStyle.LOTTO_MOBILE_HEADER;
+						break;
+				}
+			}
+		]]>
+	</mx:Script>
+
+	<injection:Configure target="{ pm }" />
+	<pm:MobileTeaserPM id="pm" region="{ region }"/>
+
+	<mx:Label
+		left="4"
+		text="{ pm.teaser.title }"
+		styleName="mobileTeaserTitle"/>
+	<mx:Canvas
+		width="100%"
+		height="{canvasHeight}"
+		top="30"
+		styleName="mobileTeaserBackground"
+		horizontalScrollPolicy="off"
+		verticalScrollPolicy="off"
+		>
+		<mx:filters>
+			<mx:DropShadowFilter distance="1" blurX="7" blurY="5" alpha="0.6" angle="90"/>
+		</mx:filters>
+		<mx:HBox
+			id="linksContainer"
+			width="240"
+			top="16"
+			left="10"
+			paddingBottom="16"
+			horizontalAlign="center"
+			verticalAlign="middle"
+			horizontalScrollPolicy="off">
+			<view:ImageFitArea
+				source="{pm.teaser.image}"
+				/>
+			<mx:VBox
+				verticalGap="10"
+				>
+				<controls:CSSText
+				id="cssText"
+				htmlText="{ pm.teaser.headline }"
+				width="100"
+				selectable="false"
+				 />
+				<mx:Button
+					id="linkButton"
+					label="{ resourceManager.getString( BUNDLE, 'SUBSCRIBE' ) }"
+					useHandCursor="true"
+					buttonMode="true"
+					skin="{ RegionSkinUtil.getDSSmallGlassButtonSkin( region ) }"
+					width="83"
+					height="23"
+					focusAlpha="0"
+					visible="{pm.subscribeButtonVisible}"
+					/>
+			</mx:VBox>
+		</mx:HBox>
+		<mx:Text
+			id="bodyText"
+			top="16"
+			right="10"
+			htmlText="{ pm.teaser.bodytext }"
+			width="258"
+			styleName="mobileTeaserInfo"/>
+
+		<mx:Button
+			height="23"
+			width="75"
+			toggle="false"
+			useHandCursor="true"
+			buttonMode="true"
+			bottom="{bottomSpace}"
+			x="268"
+			skin="@Embed(source='/assets/embedded/lotto/demo_btn.png')"
+			/>
+
+		<mx:Button
+			height="23"
+			right="10"
+			bottom="{bottomSpace}"
+			styleName="mobileTeaserDetailsLink"
+			label="{ resourceManager.getString( BUNDLE, 'READ_MORE' ) }"
+			labelPlacement="left"
+			toggle="false"
+			useHandCursor="true"
+			buttonMode="true"
+			click="pm.showDetails()"/>
+		 <mx:HBox
+			id="mobileGameContainer"
+			width="100%"
+			bottom="1"
+			left="0"
+			paddingBottom="1"
+			horizontalScrollPolicy="off">
+		</mx:HBox>
+	</mx:Canvas>
+
+</mx:Canvas>

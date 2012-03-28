@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:local="*"
+	tabEnabled="true"
+	focusIn="onFocusIn()"
+	focusOut="onFocusOut()"
+	toolTipShown="setToolTipColor(event)"
+	creationComplete="init()"
+	initialize="createTooltip()" 
+	xmlns:controls="view.controls.*" xmlns:textinputs="com.test.common.view.controls.text.textinputs.*">
+	<mx:Metadata>
+		[Event(name="enter",type="flash.events.Event")]
+	</mx:Metadata>
+	<mx:Script>
+		<![CDATA[
+			import mx.events.ToolTipEvent;
+			import mx.skins.halo.ToolTipBorder;
+			import mx.managers.ToolTipManager;
+			import mx.controls.Alert;
+			import mx.controls.ToolTip;
+			import mx.events.ToolTipEvent;
+			
+			[Bindable]
+			public var defaultText : String;
+			
+			[Bindable]
+			public var defultTextColor : uint = 0x333333;
+
+			public var toolTipxOffset : Number = 0;
+
+			public var focusInFunction : Function;
+			public var focusOutFunction : Function;
+	
+			private var originalColor : uint;
+			private var is_displayAsPassword : Boolean;
+			private var _toolTipPosition : String = "errorTipLeft";
+
+			private var msgTip : ToolTip;
+			
+			[Bindable]
+			private var _errorString : String;
+			
+			[Bindable("change")]
+			public function get firstPartText() : String 
+			{
+				return inputOne.text;
+			}
+			
+			[Bindable("change")]
+			public function get secondPartText() : String 
+			{
+				return inputTwo.text;
+			}
+			
+			override public function set errorString(value:String):void
+			{
+				if( value == null || value == "" )
+				{
+					super.errorString = null;
+					_errorString = value;
+					this.toolTip = _defaultToolTip;
+				}
+				else
+				{
+					super.errorString = value;
+					this.toolTip = errorString;
+					_errorString = value;
+					if( inFocus )
+					{
+						msgTip.visible = true;
+					}
+				}
+			}
+			
+			private var _defaultToolTip : String;
+			
+			public function set defaultToolTip( value : String ) : void
+			{
+				
+				_defaultToolTip = value;
+				toolTip = _defaultToolTip;
+			}
+			
+			override public function set toolTip(value : String) : void
+			{
+				super.toolTip = value;
+				if( msgTip != null )
+				{
+					msgTip.text = value;
+				}
+				this.callLater(setTip);
+			}
+
+			private function init() : void
+			{
+				originalColor = this.getStyle("color");
+				setTip();
+			}
+			
+			private function setToolTipPosition() : void
+			{
+				if (msgTip)
+				{
+					msgTip.setStyle("borderStyle", _toolTipPosition);
+				}
+			}
+
+			private function createTooltip() : void
+			{
+				var pt : Point = new Point(this.x, this.y);
+				pt = Object(this.parent).contentToGlobal(pt);
+
+				msgTip = ToolTipManager.createToolTip(this.toolTip, pt.x - toolTipxOffset, pt.y, "errorTipLeft")as ToolTip;
+				msgTip.styleName = "registerToolTipStyle";
+				setToolTipPosition();
+				msgTip.visible = false;
+			}
+
+			private function setTip() : void
+			{
+				var pt : Point = new Point(this.x, this.y);
+				pt = Object(this.parent).contentToGlobal(pt);
+				msgTip.x = pt.x;
+				msgTip.y = pt.y;
+
+				var xOffset : int;
+				switch (_toolTipPosition)
+				{
+					case "errorTipRight" : 
+						xOffset = this.width + 5 + toolTipxOffset;
+						break;
+					default : 
+						xOffset = -(msgTip.width + 5 + toolTipxOffset);
+						break;
+				}
+				msgTip.x += xOffset;
+			}
+
+
+			private function onFocusIn() : void
+			{
+				showToolTip();
+				
+				if (focusInFunction != null)
+				{
+					focusInFunction();
+				}
+			}
+			
+			public function showToolTip() : void
+			{
+				
+				//this.setFocus();
+				if (toolTip)
+				{
+					setTip();
+					msgTip.visible = true;
+				}
+			}
+
+			public function hideToolTip() : void
+			{
+				if( inFocus )
+				{
+					return;	
+				}
+				
+				msgTip.visible = false;
+			}
+			
+			private function isEmptyString( value : String ) : Boolean
+			{
+				return errorString == null || errorString == "";
+			}
+
+			private function onFocusOut() : void
+			{
+				hideToolTip();
+				
+				if (focusOutFunction != null)
+				{
+					focusOutFunction();
+				}
+			}
+
+			private function setToolTipColor(event : ToolTipEvent) : void
+			{
+				var tip : ToolTip = event.toolTip as ToolTip;
+				tip.visible = false;
+			}
+			
+			public function get inFocus() : Boolean
+			{
+				if( inputOne.inFocus )
+				{
+					return true;
+				}
+				if( inputTwo.inFocus )
+				{
+					return true;
+				}
+				
+				return false;
+			}
+			
+			private function handleEnterClicked() : void
+			{
+				dispatchEvent( new Event("enter") );
+			}
+			
+			private function handleChange() : void
+			{
+				
+				if (inputOne.text.length == 6)
+				{
+				  focusManager.setFocus(inputTwo);
+				}
+				dispatchEvent( new Event( "change" ) );
+			}
+		]]>
+	</mx:Script>
+	<textinputs:FormTextInputNoToolTip
+		id="inputOne"
+		width="108"
+		height="23"
+		errorString="{ _errorString }"
+		enter="handleEnterClicked()"
+		change="handleChange()"
+		maxChars="6"
+		restrict="0-9"
+		tabIndex="2"/>
+	<textinputs:FormTextInputNoToolTip
+		id="inputTwo"
+		width="61"
+		right="0"
+		height="23"
+		maxChars="4"
+		restrict="0-9"
+		tabIndex="3"
+		errorString="{ _errorString }"
+		enter="handleEnterClicked()"
+		change="handleChange()"/>
+</mx:Canvas>

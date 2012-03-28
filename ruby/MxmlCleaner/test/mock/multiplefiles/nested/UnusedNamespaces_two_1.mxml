@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox 
+	xmlns:menu="com.test.common.view.regions.menu.*"
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	verticalGap="-2"
+	 >
+	<mx:Metadata>
+		[Style(name="showDelay", type="Number", format="Time", inherit="no")]
+		[Style(name="hideDelay", type="Number", format="Time", inherit="no")]
+	</mx:Metadata>
+	<mx:Script>
+		<![CDATA[
+			import com.test.common.model.content.menu.MenuItem;
+			import com.test.common.model.content.menu.Link;
+			import mx.core.UIComponent;
+			[Bindable] public var dataProvider : Object;
+			private var _selected : Boolean;
+			[Bindable]
+			public function set selected( value : Boolean ) : void 
+			{
+				_selected = value;
+				if( value )
+				{
+					var showDelay : Number = getStyle("showDelay");
+					if( isNaN( showDelay ) ||showDelay < 0 ) showDelay = 0;
+					showSubmenu( showDelay );
+				}
+				else
+				{
+					var hideDelay : Number = getStyle("hideDelay");
+					if( isNaN( hideDelay ) || hideDelay < 0 ) hideDelay = 0;
+					hideSubmenu( hideDelay );
+				}
+			} 
+			public function get selected() : Boolean 
+			{
+				return _selected;
+			}
+			private var timer : Timer;
+			public function showSubmenu( showDelay : int = 100 ) : void 
+			{
+				includeInLayout = true;
+				visible = true;
+				if( timer != null && timer.running ) timer.stop();
+				timer = new Timer( showDelay );
+				timer.addEventListener( TimerEvent.TIMER, showNextButton );
+				timer.start();
+			}
+			private function showNextButton( event : TimerEvent = null ) : void 
+			{
+				for( var i : int = 0; i < numChildren; i++ )
+				{
+					var child : UIComponent = UIComponent( getChildAt( i ));
+					if( child.includeInLayout == false )
+					{
+						child.includeInLayout = true;
+						child.visible = true;
+						return;
+					}
+				} 
+				timer.stop();
+			}
+			public function hideSubmenu( hideDelay : int = 100 ) : void 
+			{
+				if( timer != null && timer.running ) timer.stop();
+				timer = new Timer( hideDelay );
+				timer.addEventListener( TimerEvent.TIMER, hideNextButton );
+				timer.start();
+			}
+			private function hideNextButton( event : TimerEvent = null ) : void 
+			{
+				for( var i : int = numChildren - 1; i >= 0; i-- )
+				{
+					var child : UIComponent = UIComponent( getChildAt( i ));
+					if( child.includeInLayout == true )
+					{
+						child.includeInLayout = false;
+						child.visible = false;
+						return;
+					}
+				} 
+				timer.stop();
+				includeInLayout = false;
+				visible = false;
+			}
+		]]>
+	</mx:Script>
+	<mx:Repeater id="links" dataProvider="{ dataProvider }">
+		<menu:RegionMenuButton 
+			link="{ MenuItem( links.currentItem ).link }" 
+			styleName="dsTestViewComponentsRegionMenuSubmenuButton" 
+			includeInLayout="false" visible="false" 
+			/>			
+	</mx:Repeater>
+</mx:VBox>

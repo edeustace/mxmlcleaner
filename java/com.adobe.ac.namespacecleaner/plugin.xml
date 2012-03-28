@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+	<extension point="org.eclipse.ui.popupMenus">
+		<objectContribution
+            adaptable="true"
+            id="com.adobe.ac.namespacecleaner.popup.actions.RemoveUnusedNamespacesAction"
+            objectClass="org.eclipse.core.resources.IResource">
+            
+            <menu
+	        	id="org.eclipse.ui.articles.action.contribution.navigator.subMenu"
+	        	label="Cairngorm Tools"
+	        	path="additions">
+			    <separator name="group1"/>
+			</menu>
+			
+			<action
+	               class="com.adobe.ac.namespacecleaner.popup.actions.RemoveUnusedNamespacesAction"
+	               enablesFor="*"
+	               id="com.adobe.ac.namespacecleaner.popup.actions.RemoveUnusedNamespacesAction"
+	               label="Tidy mxml namespaces"
+	               menubarPath="org.eclipse.ui.articles.action.contribution.navigator.subMenu/group1" 
+	               tooltip="Tidy mxml namespaces"/>
+         
+		</objectContribution>
+		
+		
+	</extension>
+
+</plugin>

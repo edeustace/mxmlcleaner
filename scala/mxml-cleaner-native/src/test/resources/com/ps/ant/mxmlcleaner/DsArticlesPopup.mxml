@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	 Terms and conditions popup class. It displays a text with vertical scroll bar. The popup
+	 accepts small subset of HTML text formatting tags. You can jump around inside of to the text
+	 by clicking on one of the links at the top
+-->
+<DsPopup xmlns="com.test.two.games.view.components.popups.*"
+	xmlns:containers="flexlib.containers.*"
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:dscomps="com.test.two.games.view.components.*"
+	width="{POPUP_WIDTH}"
+	statusBarHeight="{POPUP_STATUSBAR_HEIGHT}"
+	dragBarHeight="{POPUP_TITLEBAR_HEIGHT}"
+	topButtonsBarHeight="{POPUP_TITLEBAR_HEIGHT}"
+	topButtonsPaddingRight="17"
+	draggable="true"
+	printable="true"
+	styleName="articlesPopUpStyle"
+	initialize="onInitialize()"
+	xmlns:popups="com.test.two.community.popups.*"
+	xmlns:components="com.test.two.community.components.*">
+	<content>
+		<mx:VBox id="popupContent"
+			width="100%"
+			verticalGap="0"
+			horizontalScrollPolicy="off"
+			verticalScrollPolicy="off">
+
+			<!-- Help popup's title bar. -->
+			<mx:HBox id="titleBarArea"
+				width="100%"
+				height="{POPUP_TITLEBAR_HEIGHT}"
+				horizontalAlign="left"
+				verticalAlign="middle"
+				horizontalScrollPolicy="off"
+				verticalScrollPolicy="off"
+				paddingLeft="22"
+				paddingTop="3">
+
+				<mx:Label id="titleLabel"
+					text="{title}"
+					textAlign="left"
+					width="100%"/>
+			</mx:HBox>
+
+			<mx:VBox id="menuBarArea"
+				width="100%">
+
+				<!-- Article Links bar -->
+				<containers:FlowBox width="100%"
+					horizontalScrollPolicy="off"
+					verticalScrollPolicy="off"
+					styleName="articlesPopupLinkBarStyle"
+					updateComplete="updateBars( event )">
+
+					<mx:Repeater id="articleLinksRepeater"
+						dataProvider="{ articleLinks }">
+						<mx:LinkButton focusEnabled="false"
+							data="{ articleLinksRepeater.currentIndex }"
+							label="{ articleLinksRepeater.currentItem }"
+							styleName="articlesPopUpLinkButtonStyle"
+							click="onLinkButtonClick( event )"/>
+
+						<mx:VRule height="12"
+							strokeWidth="1"
+							strokeColor="#044B31"/>
+					</mx:Repeater>
+				</containers:FlowBox>
+
+				<!-- Anchor bar -->
+				<containers:FlowBox width="100%"
+					horizontalScrollPolicy="off"
+					verticalScrollPolicy="off"
+					styleName="articlesPopUpAnchorBarStyle"
+					paddingLeft="25"
+					updateComplete="updateBars( event )">
+
+					<mx:Repeater id="anchorsRepeater"
+						dataProvider="{ anchors }">
+						<mx:LinkButton focusEnabled="false"
+							data="{ anchorsRepeater.currentIndex }"
+							label="{ anchorsRepeater.currentItem }"
+							styleName="articlesPopUpAnchorButtonStyle"
+							click="onAnchorButtonClick( event )"/>
+
+						<mx:VRule height="12"
+							strokeWidth="1"
+							strokeColor="#044B31"/>
+					</mx:Repeater>
+				</containers:FlowBox>
+
+			</mx:VBox>
+
+			<mx:Spacer id="textAreaPaddingTop"
+				height="0"/>
+
+			<dscomps:DsTextArea id="textArea"
+				width="{POPUP_WIDTH}"
+				condenseWhite="true"
+				tabEnabled="false"
+				editable="false"
+				selectable="true"
+				resizable="true"
+				horizontalScrollPolicy="off"
+				verticalScrollBarStyleName="articlesPopupVScrollBarStyle"
+				htmlText="{text}"
+				externallink="onExternalLink(event)"/>
+
+			<mx:Spacer id="textAreaPaddingBottom"
+				height="0"/>
+
+		</mx:VBox>
+	</content>
+
+</DsPopup>

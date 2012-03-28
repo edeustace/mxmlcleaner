@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (c)
+// áó
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+
+<!--
+	Generic help popup class. Help popups display a text with horizontal scroll bar. The popup 
+	accepts small subset of HTML text formatting tags.
+-->
+<DsPopup 
+		xmlns="com.test.two.games.view.components.popups.*" 
+		xmlns:mx="http://www.adobe.com/2006/mxml"
+ 		xmlns:dscomps="com.test.two.games.view.components.*"
+ 		width="{POPUP_WIDTH}"
+		statusBarHeight="{POPUP_STATUSBAR_HEIGHT}"
+		dragBarHeight="{POPUP_TITLEBAR_HEIGHT}"
+		topButtonsBarHeight="{POPUP_TITLEBAR_HEIGHT}"
+		topButtonsPaddingRight="17"
+		draggable="true"
+		printable="true"
+		styleName="dsHelpPopupStyle"
+		initialize="onInitialize()">
+		
+	<mx:Metadata>
+	 	// Name of the CSS style declaration that specifies styles for the title bar.
+		[Style(name="titleBarStyleName", type="String", inherit="yes")]
+		
+ 	 	// Name of the CSS style declaration that specifies styles for the title label.
+		[Style(name="titleLabelStyleName", type="String", inherit="yes")]
+
+	 	// Name of the CSS style declaration that specifies styles for the text area.
+		[Style(name="textAreaStyleName", type="String", inherit="yes")]
+		
+	 	// Name of the CSS style declaration that specifies styles for the text area.
+		[Style(name="textAreaBackgroundStyleName", type="String", inherit="yes")]
+		
+	 	// Name of the CSS style declaration that specifies text area's top padding.
+		[Style(name="textAreaPaddingTop", type="Number", inherit="yes")]
+
+	 	// Name of the CSS style declaration that specifies text area's bottom padding.
+		[Style(name="textAreaPaddingBottom", type="Number", inherit="yes")]
+		
+		// Dispatched when the user selects the close button.
+		[Event(name="close", type="mx.events.CloseEvent")]
+		
+		// Dispatched when the user selects the print button.
+		[Event(name="print", type="flash.events.Event")]
+		
+	</mx:Metadata>
+	
+	<mx:Style>
+		
+
+	</mx:Style>
+
+	<mx:Script>
+		<![CDATA[
+			import com.test.two.games.view.components.events.DsTextEvent;
+			import com.test.two.games.model.DsModelLocator;
+			import com.test.two.games.view.components.DsTextArea;
+			import com.test.two.games.view.components.ElephantMan;
+			
+			import mx.managers.PopUpManager;
+			import mx.core.Application;
+			
+			///////////////////////////////////////////////////
+			// METHODS
+			///////////////////////////////////////////////////
+			
+			 var te : DsTextEvent;
+			 var ml : DsModelLocator;
+			 var ta : DsTextArea;
+			 var ma : PopUpManager;
+			 var ap : Application;
+		]]>
+	</mx:Script>
+
+	<content>
+		<mx:VBox 
+				id="popupContent"
+				width="100%"
+				verticalGap="0"
+				horizontalScrollPolicy="off" verticalScrollPolicy="off">
+
+			<!-- Help popup's title bar. -->
+			<mx:HBox 
+					id="titleBarArea" 
+					width="100%" height="{POPUP_TITLEBAR_HEIGHT}"
+					horizontalAlign="left" verticalAlign="middle" 
+					horizontalScrollPolicy="off" verticalScrollPolicy="off"
+					paddingLeft="22" paddingTop="3">
+					
+				<mx:Label id="titleLabel" text="{title}" textAlign="left" width="100%"/>
+			</mx:HBox>
+			
+			<mx:Spacer id="textAreaPaddingTopSpacer" height="0"/>
+			
+			<!-- Help popup's text area. -->
+			<dscomps:DsTextArea 
+					id="textArea" 
+					width="{POPUP_WIDTH}" 
+					condenseWhite="true" 
+					tabEnabled="false" 
+					editable="false" selectable="false" resizable="true"
+					horizontalScrollPolicy="off"
+					verticalScrollBarStyleName="dsPopupVScrollBarStyle" 
+					htmlText="{text}"
+					externallink="onExternalLink(event)"/>
+
+			<mx:Spacer id="textAreaPaddingBottomSpacer" height="0"/>
+
+		</mx:VBox>
+	</content>
+	
+</DsPopup>

@@ -1,0 +1,60 @@
+<regions:BasePlayNowView 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="init()" 
+	xmlns:regions="com.test.common.view.regions.*">
+
+	<mx:Metadata>
+        [ResourceBundle("LottoPlayNow")]
+    </mx:Metadata> 
+    <mx:Style>
+		.dsTestViewStyledLabelsLottoPlayNow
+		{
+			fontFamily: "SignaColumn-Bold";
+		    fontSize: 15;
+		    color: #FFFFFF;
+      
+		}
+		.PlayNowViewMenuBarStyle{ 
+            padding-top:10; 
+            padding-left:5;
+            padding-right:5; 
+            padding-bottom:10; 
+            horizontal-gap:8; 
+            border-thickness:0;
+		}
+		.PlayNowbuttonStyle{
+			
+		}
+	</mx:Style>
+	<mx:Script>
+		<![CDATA[
+			
+			private static const BUNDLE : String = "LottoPlayNow";
+			
+			private function init():void
+			{
+				pm = new LottoPlayNowPM();
+				
+				pm.getPlayNowLinks();
+				playNowText = resourceManager.getString( BUNDLE, 'PLAY_NOW' );
+				labelStyleName = "dsTestViewStyledLabelsLottoPlayNow";
+				/*
+				
+				hBoxbuttons.addChild(createButton(LottoPlayNowPM.INDEX_LOTTO, resourceManager.getString( BUNDLE, 'LOTTO' ))); 
+				hBoxbuttons.addChild(createButton(LottoPlayNowPM.INDEX_LOTTO_MIDWEEK, resourceManager.getString( BUNDLE, 'MIDWEEK_LOTTO' )));
+				hBoxbuttons.addChild(createButton(LottoPlayNowPM.INDEX_LOTTO_SUBSCRIPTION, resourceManager.getString( BUNDLE, 'LOTTO_SUBSCRIPTION' )));
+			}
+			
+			public function createButton(index:int , label:String): Button
+			{
+				var bnt:Button = new Button();
+				bnt.label = label;
+				bnt.buttonMode = true;
+				bnt.setStyle("skin","DSBigGlassButton");
+				bnt.addEventListener(FlexEvent.BUTTON_DOWN, function(e:FlexEvent):void{pm.playNow(index);});
+				return bnt;
+				*/
+			}
+		]]>
+	</mx:Script>
+	</regions:BasePlayNowView>

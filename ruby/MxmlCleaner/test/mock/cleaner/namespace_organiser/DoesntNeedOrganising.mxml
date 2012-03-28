@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:background="com.test.common.view.background.*"
+	xmlns:fliccext="com.adobe.fliccext.*"
+	xmlns:ioc="com.test.core.model.ioc.*"
+	xmlns:loaders="com.test.common.loaders.*"
+	xmlns:lotto="com.test.lotto.view.*"
+	xmlns:mxml="flicc.factory.mxml.*"
+	xmlns:urlkit="urlkit.rules.*"
+	implements="com.test.printing.IPrintOutputHolder"
+	height="100%"
+	width="100%"
+	addedToStage="initMouseHandler()"
+	creationComplete="main()"
+	initialize="init()"
+	horizontalAlign="center"
+	horizontalScrollPolicy="auto"
+	backgroundAlpha="0"
+	backgroundImage="null"
+	frameRate="25"
+	historyManagementEnabled="false"
+	layout="vertical">
+
+
+	<mx:Style source="dspopuplib.css"/>
+	<mx:Script>
+		<![CDATA[
+			import com.adobe.util.DisplayObjectIdentifier;
+			import com.adobe.util.mousewheel.MouseWheelEnabler;
+
+			import com.test.common.loaders.events.ViewLoadingStateEventCategories;
+			import com.test.common.model.constants.TestRegions;
+			import com.test.common.model.pm.regions.validator.RegionValidator;
+			import com.test.common.model.task.ITask;
+			import com.test.common.model.task.LoadStyleTask;
+			import com.test.common.model.task.LoadTextFileTask;
+			import com.test.common.model.task.LoadTrackingConfigurationTask;
+			import com.test.common.model.task.RefreshStylesTask;
+			import com.test.common.model.task.TaskRunner;
+			import com.test.common.model.tracking.RealActionSource;
+			import com.test.common.model.tracking.TrackingManager;
+			import com.test.common.nav.NavigationManager;
+			import com.test.common.nav.NavigationModel;
+			import com.test.common.util.DSAlert;
+			import com.test.lotto.model.constants.LottoSubRegionConstants;
+			import com.test.util.LogUtil;
+
+			import flash.utils.getTimer;
+
+			import mx.core.Container;
+			import mx.logging.ILogger;
+
+			import urlkit.rules.UrlBaseRule;
+
+			private static const APPLICATION_READY_TO_SHOW : String = "applicationReadyToShow";
+
+			private var log : ILogger;
+
+			private var startTime : int;
+
+			[Bindable]
+			private var navigationModel : NavigationModel;
+
+			private function addLoadStyleTasks(taskRunner : TaskRunner) : void
+			{
+				taskRunner.addTask(new LoadStyleTask("fontsstyles.swf"));
+				taskRunner.addTask(new LoadStyleTask("textstyles.swf"));
+				taskRunner.addTask(new LoadStyleTask("commonstyles.swf"));
+				taskRunner.addTask(new LoadStyleTask("lottostyles.swf"));
+				taskRunner.addTask(new LoadStyleTask("hindustyles.swf"));
+				taskRunner.addTask(new RefreshStylesTask());
+			}
+
+
+			private function init() : void
+			{
+				initLogging();
+			}
+
+			private function initMouseHandler() : void
+			{
+				MouseWheelEnabler.init(stage);
+			}
+
+			private function main() : void
+			{
+				startTime = flash.utils.getTimer();
+
+				initSingletons();
+				initNavigation();
+				loadConfigurationFiles();
+			}
+
+			private function initSingletons() : void
+			{
+				objectFactory.getInstance("serviceLocator");
+				objectFactory.getInstance("controller");
+			}
+
+			private function initNavigation() : void
+			{
+				NavigationManager.getInstance().navigationModel = navigationModel = objectFactory.getInstance("navigationModel");
+				navigationModel.defaultRegion = TestRegions.LOTTO;
+				navigationModel.regionValidator = RegionValidator.getForRegionStrings([TestRegions.LOTTO]);
+				navigationModel.addSubRegionConstants(TestRegions.LOTTO, LottoSubRegionConstants);
+			}
+
+			private function initLogging() : void
+			{
+				LogUtil.addTraceTarget();
+				LogUtil.addDataProviderTarget();
+				log = LogUtil.getLogger(this);
+				log.info("logging initialised.");
+			}
+
+			private function loadConfigurationFiles() : void
+			{
+				var bulkLoader : TaskRunner = new TaskRunner();
+				addLoadStyleTasks(bulkLoader);
+				bulkLoader.addTask(createLoadBuildNumberTask());
+				bulkLoader.addTask(createLoadTrackingConfigurationTask());
+				bulkLoader.addEventListener(Event.COMPLETE, loadConfigurationFilesComplete);
+				bulkLoader.start();
+			}
+
+
+
+			private function loadConfigurationFilesComplete(event : Event) : void
+			{
+				event.currentTarget.removeEventListener(event.type, arguments.callee);
+				log.debug("Startup completed in {0}", flash.utils.getTimer() - startTime);
+				currentState = APPLICATION_READY_TO_SHOW;
+			}
+
+			private function createLoadBuildNumberTask() : ITask
+			{
+				var result : LoadTextFileTask = new LoadTextFileTask("buildNumber.txt", 1000);
+				result.addEventListener(Event.COMPLETE, loadBuildNumberComplete);
+				return result;
+			}
+
+			private function loadBuildNumberComplete(event : Event) : void
+			{
+				event.currentTarget.removeEventListener(event.type, arguments.callee);
+
+				var task : LoadTextFileTask = LoadTextFileTask(event.target);
+				var buildNumber : String = task.error ? "error reading build number." : task.data;
+				initDisplayObjectIdentifier(buildNumber);
+			}
+
+			CONFIG::debug
+
+			private function initDisplayObjectIdentifier(buildNumber : String) : void
+			{
+				// Only link in DisplayObjectIdentifier ( FlexSpy et al ) if
+				// we're in debug mode.
+				DisplayObjectIdentifier.init(this, [new ContextMenuItem("build:" + buildNumber + " player:" + Capabilities.version)]);
+			}
+			CONFIG::release
+
+			private function initDisplayObjectIdentifier(buildNumber : String) : void
+			{
+			}
+
+			private function createLoadTrackingConfigurationTask() : ITask
+			{
+				var url : String = String( Application.application.parameters.trackingUrl );
+
+				if( url == null )
+				{
+					throw new Error( "you need to specify a tracking xml ");
+				}
+				var result : LoadTrackingConfigurationTask = new LoadTrackingConfigurationTask( url, 1000 );
+				result.addEventListener(Event.COMPLETE, loadTrackingConfigurationComplete);
+				return result;
+			}
+
+			private function loadTrackingConfigurationComplete(event : Event) : void
+			{
+				event.currentTarget.removeEventListener(event.type, arguments.callee);
+
+				var task : LoadTrackingConfigurationTask = LoadTrackingConfigurationTask(event.target);
+				if (task.error)
+					throw new Error("error reading tracking configuration:" + task.error + ".");
+				if (task.data == null)
+					throw new Error("error reading tracking configuration, configuration is null.");
+
+				initTracking(task.data);
+			}
+
+			private function get trackingManager() : TrackingManager
+			{
+				return TrackingManager( objectFactory.getInstance("trackingManager"));
+			}
+
+			private function initTracking(data : XML) : void
+			{
+				trackingManager.init(data, new ClassFactory(RealActionSource));
+				navigationModel.addEventListener(UrlBaseRule.STATE_CHANGE, trackPage);
+			}
+
+			private function trackPage(event : Event) : void
+			{
+				try
+				{
+					trackingManager.trackOmniture(navigationModel.plainUrl);
+				}
+				catch (e : Error)
+				{
+					DSAlert.showError(e.message, "DEV-Test-trackPage", "Tracking error");
+				}
+			}
+
+			/**
+			 * implementing IPrintOutputHolder
+			 */
+			public function getPrintOutputHolder() : Container
+			{
+				return printOutput;
+			}
+
+		]]>
+	</mx:Script>
+
+	<mxml:FliccEventFactoryListener>
+		<fliccext:MetaDataMxmlObjectFactory id="objectFactory">
+			<fliccext:config>
+				<ioc:CoreConfig/>
+			</fliccext:config>
+		</fliccext:MetaDataMxmlObjectFactory>
+	</mxml:FliccEventFactoryListener>
+
+	<urlkit:FlexBrowserManagerAdapter applicationState="{ navigationModel }"/>
+
+
+	<loaders:ViewLoaderManager>
+		<loaders:viewPolicies>
+			<loaders:ViewLoaderPolicy targetCategory="{ ViewLoadingStateEventCategories.APPLICATION_CONTENT }"
+				loaderHandler="com.test.common.loaders.handlers.InvisibleWhileLoadingHandler"/>
+			<loaders:ViewLoaderPolicy targetCategory="{ ViewLoadingStateEventCategories.SWF_CONTENT }"
+				loaderHandler="com.test.common.loaders.handlers.ShowAndPlaySWFHandler"/>
+			<loaders:ViewLoaderPolicy targetCategory="{ ViewLoadingStateEventCategories.BODY_TEXT }"
+				loaderHandler="com.test.common.loaders.handlers.InvisibleWhileLoadingHandler"/>
+		</loaders:viewPolicies>
+	</loaders:ViewLoaderManager>
+
+	<mx:states>
+		<mx:State name="applicationReadyToShow">
+			<mx:RemoveChild target="{ loadingStylesContainer }"/>
+			<mx:AddChild>
+				<!-- We need a invisible container for printing.
+					 Unfortunately it cannot be set to visible=false or something similar
+					 because this interferes with the printing output.
+					 So the solution is to place it inside another canvas and set the x, y to -something
+					 so that won't be visible for the user.
+				-->
+				<mx:Canvas includeInLayout="false">
+					<mx:Canvas id="printOutput"
+						x="-1000"
+						y="-1000"/>
+				</mx:Canvas>
+
+			</mx:AddChild>
+			<!--
+				 <mx:AddChild>
+				 <background:TestBackgroundView
+				 id="background"/>
+				 </mx:AddChild>
+			-->
+			<mx:AddChild>
+				<lotto:LottoRegionView width="934"
+					id="lottoView"/>
+			</mx:AddChild>
+
+		</mx:State>
+	</mx:states>
+	<mx:Canvas id="loadingStylesContainer"
+		width="100%"
+		height="100%">
+		<mx:Label text="IndlÃ¦ser siden..."
+			horizontalCenter="0"
+			verticalCenter="0"/>
+	</mx:Canvas>
+</mx:Application>

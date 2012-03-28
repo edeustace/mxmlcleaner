@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><mx:VBox	xmlns:mx="http://www.adobe.com/2006/mxml"	initialize="setMax()"	horizontalAlign="center"	verticalAlign="middle"	verticalGap="0"	>	<mx:Script>		<![CDATA[                        import com.test.used.Used;                        private var used : Used;					]]>	</mx:Script>	</mx:VBox>

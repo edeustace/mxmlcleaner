@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	implements="com.test.common.model.IImageLinkClient"
+	horizontalScrollPolicy="off"
+	verticalScrollPolicy="off">
+
+	<mx:Script>
+		<![CDATA[
+			import com.test.common.events.GetImageLinkEvent;
+			import com.test.common.events.NavigateEvent;
+			import com.test.common.model.content.ImageLink;
+			import com.test.common.model.content.menu.Link;
+
+			import mx.controls.Alert;
+
+            private var imageLink : ImageLink;
+
+            [Bindable]
+            private var imageSource : String;
+
+            private var _imageKey : String;
+            
+            public function set imageKey( value : String ) : void
+            {
+            	_imageKey = value;
+
+            	if( _imageKey != null )
+            	{
+            		requestImage();
+            	}
+            }
+
+            [Bindable]
+            public function get imageKey() : String
+            {
+            	return _imageKey;
+            }
+
+			private function requestImage():void
+			{
+				new GetImageLinkEvent( imageKey, this).dispatch();
+			}
+
+			public function setImageLink( value : ImageLink ) : void
+			{
+				imageLink = value;
+				imageSource = imageLink.imageUrl;
+			}
+
+			public function imageClick( event : Event ) : void
+			{
+				var link : ImageLink = imageLink;
+				if( link == null
+				  || link.navigationURL == null
+				  || link.navigationURL == "" )
+				{
+					Alert.show("ImageLinkView:imageClick: Invalid cms configuration: link is empty.");
+					return;
+				}
+
+				new NavigateEvent( imageLink ).dispatch();
+			}
+		]]>
+	</mx:Script>
+
+	<mx:Image
+		id="authImage"
+		source="{ imageSource }"
+		useHandCursor="true"
+		click="imageClick( event )"
+		buttonMode="true"/>
+</mx:Canvas>
+
+
+
+
+

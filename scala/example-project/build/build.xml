@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+	name="ExampleProject_BuildFile" 
+	basedir=".."
+	default="run.clean.task">
+	
+	<taskdef
+		name="mxmlcleaner" 
+		classname="com.adobe.ps.ant.mxmlcleaner.MxmlCleanerTask"
+		classpath="build/lib/mxmlcleaner-task-1.0.jar"/>
+
+	<target name="run.clean.task">
+		<mxmlcleaner
+			sourcePath="${basedir}/flex_src/"
+			rules="${basedir}/build/customRules.properties"/>
+	</target>
+
+</project>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:view1="com.test.common.view.*"
+	creationComplete="init()"
+	xmlns:pm="com.test.frontpage.model.pm.*"
+	
+	>
+	<mx:Script>
+		<![CDATA[
+		import com.test.common.model.content.Campaign;
+		
+		[Bindable]
+		public var layout : int;
+		
+		[Bindable]
+		public var campaigns : Campaigns;
+		
+		private function init() : void
+		{
+			pm.getFrontpageCampaigns();
+		}
+		
+		]]>
+	</mx:Script>
+	
+	<pm:FrontPageCampaignPM id="pm" />
+		
+	<view1:CampaignViewer id="bottom_left" campaign="{pm.campaign1}"  
+	left="3" bottom="0" visible="{pm.campaign1Visible}"
+	width="{pm.campaign1Width}" height="{pm.campaign1Height}"
+    />
+			
+	
+	<view1:CampaignViewer id="top_right" campaign="{pm.campaign2}"
+	right="0" top="11" visible="{pm.campaign2Visible}"
+    width="{pm.campaign2Width}" height="{pm.campaign2Height}"
+    />
+        		
+	<view1:CampaignViewer id="bottom_right" campaign="{pm.campaign3}"
+	width="{pm.campaign3Width}" height="{pm.campaign3Height}" visible="{pm.campaign3Visible}"
+	right="0" bottom="0"
+	/>
+		
+</mx:Canvas>

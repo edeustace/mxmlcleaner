@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:comps="*"
+	width="100%" height="100%"
+	initialize="init()"
+	creationComplete="getBackgroundColor()"
+	>
+	
+
+	<mx:Binding
+		source="{ pm.navModel.currentRegion }"
+		destination="currentRegion" />
+
+	<comps:DSBackground
+		id="dsBackground"
+		width="100%"
+		height="100%"/>
+
+
+</mx:Canvas>

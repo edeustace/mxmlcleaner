@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:injection="flicc.injection.*"
+	xmlns:pm="com.test.frontpage.model.pm.*"
+	xmlns:ticker="com.test.frontpage.view.ticker.*"
+	buttonMode="true"
+	click="pm.navigateToCurrentLink()"
+	creationComplete="init()"
+	height="{ BOX_HEIGHT }"
+	horizontalScrollPolicy="off"
+	mouseDown="click()"
+	mouseUp="normal()"
+	rollOut="normal()"
+	rollOver="highlight()"
+	useHandCursor="true"
+	verticalScrollPolicy="off"
+	width="{ BOX_WIDTH }">
+
+	
+ 
+	
+	<mx:Script>
+		<![CDATA[
+
+			import flash.net.*;
+			import flash.text.*;
+            import com.test.Unused;
+			import mx.effects.easing.Linear;
+			import mx.effects.easing.Quadratic;
+			import mx.events.EffectEvent;
+			
+						
+																		                                                            
+			
+			private static const BOX_HEIGHT : int = 27;
+			private static const BOX_WIDTH : int = 214;
+			private static const BASE_DURATION : int = 3000;
+			
+			[Bindable]
+			private var moveMiddleDuration : int = BASE_DURATION;
+			[Bindable]
+			private var landingPosition : int = 0;
+			[Bindable]
+			private var takeOffPosition : int = -214;
+			[Bindable]
+			private var startMovingTextOutAt : int = 0;
+			
+			
+			private function init() : void
+			{	
+				normal();
+			}
+			
+			private function normal() : void
+			{
+				bg.setStyle( "fillColors", [0xFFD325, 0xFEB700]);
+				ticker.setStyle( "color", 0x00400b );
+			}
+			
+			private function highlight() : void
+			{
+				bg.setStyle( "fillColors", [0x004b32, 0x00400b]);
+				ticker.setStyle( "color", 0xfeb700 );
+			}
+			
+			private function click() : void
+			{
+				bg.setStyle( "fillColors", [0x00400b, 0x00400b]);
+				ticker.setStyle( "color", 0xfeb700 );
+			}
+			
+			public function handleTextUpdate( value : String ) : String
+			{
+				//need to wait for the text component to update itself.
+				ticker.addEventListener( "updateComplete", handleTextUpdated );
+				return value;
+			}
+			
+			private function handleTextUpdated( event : Event ) : void
+			{
+				event.currentTarget.removeEventListener( event.type, arguments.callee );
+				animateCurrentLink();
+			}
+			
+			private function animateCurrentLink() : void
+			{
+				moveSequence.stop();
+				configureAnimationForLink();
+				moveSequence.play();
+				moveSequence.addEventListener( EffectEvent.EFFECT_END, handleAnimationComplete );  
+			}
+
+			/**
+			 * prepares the move sequence for the text that is being displayed. because this changes,
+			 * where we want to place the text and the duractioin will need to change also.
+			 */
+			private function configureAnimationForLink() : void
+			{
+				var metrics : TextLineMetrics = ticker.getLineMetrics(0);
+				var textWidth : Number = metrics.width;
+				
+				var nudgeMultiplier : Number  = .2;
+				var padding : int = 10; 
+				var midpoint : int = ( BOX_WIDTH * .5 );
+				var sitTextAt : int;
+
+				if( textWidth < BOX_WIDTH )
+				{
+					var nudge : int = textWidth * nudgeMultiplier;
+					sitTextAt = midpoint + nudge;
+				}
+				else
+				{
+					sitTextAt = 70;
+				
+				}
+				landingPosition = sitTextAt;
+				
+				var durationMultiplier : Number = 1;
+				
+				if( textWidth > BOX_WIDTH )
+				{
+					startMovingTextOutAt = BOX_WIDTH - ( textWidth + padding );
+					durationMultiplier = ( textWidth + padding ) / BOX_WIDTH;
+				}
+				else
+				{
+					startMovingTextOutAt = midpoint - (textWidth * nudgeMultiplier) - (textWidth * .5);
+				}
+				
+				moveMiddleDuration = BASE_DURATION * durationMultiplier * 1.5;
+				takeOffPosition = textWidth * -1;
+			}
+			
+
+			private function handleAnimationComplete( event : EffectEvent ) : void
+			{
+				pm.nextLink();
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<injection:Configure
+		target="{ pm }"
+		/>
+	
+	<pm:TickerPM
+		id="pm" />
+	
+	<mx:Sequence
+		id="moveSequence"
+		target="{ ticker }" 
+		suspendBackgroundProcessing="true">
+		<mx:Move
+			id="moveIn"
+			easingFunction="{ Quadratic.easeOut }"
+			duration="{ Math.ceil( BASE_DURATION * 0.2 ) }"
+			xFrom="{ Math.ceil( BOX_WIDTH ) }"
+			xTo="{ Math.ceil( landingPosition ) }"/>
+		<mx:Move
+			id="moveSlow"
+			easingFunction="{ Linear.easeNone }"
+			duration="{ Math.ceil( moveMiddleDuration ) }"
+			xTo="{ Math.ceil( startMovingTextOutAt ) }"/>
+		<mx:Move
+			id="moveOut"
+			easingFunction="{ Quadratic.easeIn }"
+			duration="{ Math.ceil( BASE_DURATION * 0.4 ) }"
+			xTo="{ Math.ceil( takeOffPosition ) }"/>
+	</mx:Sequence>
+	
+	<ticker:TickerBackground
+		id="bg"
+		width="{ BOX_WIDTH }"
+		height="{ BOX_HEIGHT }"
+		useHandCursor="true"
+		buttonMode="true"
+		/>
+	
+	<mx:Label
+		id="ticker" 
+		mouseChildren="false"
+		useHandCursor="true"
+		buttonMode="true"
+		selectable="false"
+		fontGridFitType="subpixel"
+		fontAntiAliasType="normal"
+		styleName="signaColumnBold11x004b32"
+		htmlText="{ handleTextUpdate( pm.linkToHTML( pm.currentLink )) }" 
+		height="24" 
+		x="{ BOX_WIDTH }"
+		y="4"
+		/>	
+</mx:Canvas>
+
+
+
+
+

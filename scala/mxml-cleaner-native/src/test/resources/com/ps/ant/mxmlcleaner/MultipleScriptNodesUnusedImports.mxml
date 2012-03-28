@@ -1,0 +1,19 @@
+<mx:Canvas>
+	<mx:Script>
+	<![CDATA[
+		
+		import com.Unused;
+		import com.UsedByAs;
+		import com.UsedByMxml;
+
+		public var used : UsedByAs;
+    ]]>
+	</mx:Script>
+	<mx:Label text="{ UsedByMxml.value }"/>
+	<mx:Script>
+	<![CDATA[
+		
+		import com.UnusedAgain;
+    ]]>
+	</mx:Script>
+</mx:Canvas>

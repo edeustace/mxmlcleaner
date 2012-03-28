@@ -1,0 +1,10 @@
+.name1{
+    display: block;
+}
+
+.name2,
+.name3
+{
+    display: block;
+}
+

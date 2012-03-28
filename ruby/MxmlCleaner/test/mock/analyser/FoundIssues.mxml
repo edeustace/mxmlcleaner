@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox 
+	xmlns:menu="com.test.common.view.regions.menu.*"
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	verticalGap="-2"
+	 >
+	<mx:Metadata>
+		[Style(name="showDelay", type="Number", format="Time", inherit="no")]
+		[Style(name="hideDelay", type="Number", format="Time", inherit="no")]
+	</mx:Metadata>
+	<mx:Script>
+		<![CDATA[
+			import com.test.common.nav.NavigationManager;
+			import com.test.common.model.pm.background.TestBackgroundPM;
+                        import mx.effects.Move;
+                        import com.test.frontpage.model.pm.FinePrintMenuPM;
+                        import com.test.common.model.UserManagerFactory;
+			import com.test.common.model.content.Campaign;
+
+			
+			[Bindable]
+			private var pm : TestBackgroundPM;
+			
+			private function init() : void 
+			{
+				pm = new TestBackgroundPM(); 
+				pm.navModel = NavigationManager.getInstance().navigationModel;
+			}
+
+			private static const BUNDLE : String = "FinePrintMenuView";
+			
+			[Bindable]
+			private var pm : FinePrintMenuPM;
+
+ 			private var guiMove : Move;
+
+			
+			[Bindable]
+			public var position : Number;
+			
+			[Bindable]
+			public var campaign : Campaign;
+			
+			[Bindable]
+			private var userManager : IUserManager = UserManagerFactory.getUserManager();
+		]]>
+	</mx:Script>
+	<mx:Repeater id="links" dataProvider="{ dataProvider }">
+		<menu:RegionMenuButton 
+			link="{ MenuItem( links.currentItem ).link }" 
+			styleName="dsTestViewComponentsRegionMenuSubmenuButton" 
+			includeInLayout="false" visible="false" 
+			/>			
+	</mx:Repeater>
+</mx:VBox>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:comps="*"
+	width="100%" height="100%"
+	initialize="init()"
+	creationComplete="getBackgroundColor()"
+	>
+	<mx:Script>
+		<![CDATA[
+			import com.test.common.model.pm.background.TestBackgroundPM;
+			import com.test.common.nav.NavigationManager;
+			
+			
+
+			[Bindable]
+			private var pm : TestBackgroundPM;
+
+			private var currentBackgroundRegion : String;
+
+			private function init() : void
+			{
+				pm = new TestBackgroundPM();
+				pm.navModel = NavigationManager.getInstance().navigationModel;
+			}
+
+			private function getBackgroundColor() : void
+			{
+				if( pm.navModel.currentRegion != null )
+				{
+					dsBackground.setBackgroundColor( pm.navModel.currentRegion.toUpperCase() );
+				}
+
+			}
+
+			private function set currentRegion( value : String ) : void
+			{
+
+				if( pm.navModel.currentRegion.toUpperCase() != currentBackgroundRegion )
+				{
+					dsBackground.setBackgroundColor( pm.navModel.currentRegion.toUpperCase() );
+					currentBackgroundRegion = pm.navModel.currentRegion.toUpperCase();
+				}
+			}
+		]]>
+	</mx:Script>
+
+	<mx:Binding
+		source="{ pm.navModel.currentRegion }"
+		destination="currentRegion" />
+
+	<comps:DSBackground
+		id="dsBackground"
+		width="100%"
+		height="100%"/>
+
+
+</mx:Canvas>

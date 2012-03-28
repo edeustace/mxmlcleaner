@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<combobox:TestComboBox
+	xmlns:combobox="com.test.common.view.skins.combobox.*"
+    xmlns:unused="com.unused.*"
+    xmlns:unusedview="com.view.unused.*"/>

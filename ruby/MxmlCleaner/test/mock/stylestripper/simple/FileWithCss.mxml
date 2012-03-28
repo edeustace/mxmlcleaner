@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	implements="com.test.common.model.ICampaignsClient"
+>
+
+	
+	<mx:Script>
+		<![CDATA[
+			import com.test.common.model.content.Campaign;
+			import com.test.common.events.GetCampaignsEvent;
+		
+			import com.test.common.model.content.Campaigns;
+		
+			[Bindable] private var model : Campaigns;
+			
+			public function setFrontpageCampaigns( value : Campaigns ) : void 
+			{
+				model = value;
+			}
+			
+			public function update() : void 
+			{
+				new GetCampaignsEvent( this ).dispatch();
+			}
+			
+			private function findURL( loader : SWFLoader, model : Campaigns ) : String 
+			{
+				if( model == null ) return null;
+				
+				//TODO: status should change to 1, if the user is logged in 
+				var status : int = 0;
+				
+				switch( model.layout )
+				{
+					case 0 : //three campaigns
+						if( loader == loaderBottomLeft ) return getCampaign( 0, status ).url;
+						if( loader ==  loaderBottomRight) return getCampaign( 1, status ).url;
+						if( loader == loaderTopRight ) return getCampaign( 2, status ).url;
+						
+					case 1 : //two campaigns, one big at the bottom, one small in the upper right
+						if( loader == loaderBottomLeft ) return getCampaign( 0, status ).url;
+						if( loader == loaderTopRight ) return getCampaign( 1, status ).url;
+						return null;
+						
+					case 2 : //two campaigns, one small at the bottom left, one big in the upper right
+						if( loader == loaderBottomLeft ) return getCampaign( 0, status ).url;
+						if( loader == loaderTopRight ) return getCampaign( 1, status ).url;
+						return null;
+
+					case 3 : //one campaign 
+						if( loader == loaderBottomLeft ) return getCampaign( 0, status ).url;
+						return null;
+						
+					default : 
+						throw new Error("Unexpected layout: " + model.layout + ".");	
+				}
+				return null;
+			}
+			
+			/**
+			 * The status determines if we deliver the alternative
+			 */   
+			private function getCampaign( index : int, status : int ) : Campaign
+			{
+				var result : Campaign = Campaign( model.campaigns.getItemAt( index ));
+				if( status > 0 && result.alternative != null ) result = result.alternative;
+				return result;
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:SWFLoader id="loaderBottomLeft" left="5" bottom="0" source="{ findURL( loaderBottomLeft, model ) }" />
+	<mx:SWFLoader id="loaderTopRight" right="0" top="11" source="{ findURL( loaderTopRight , model ) }"/>
+	<mx:SWFLoader id="loaderBottomRight" right="0" bottom="0" source="{ findURL( loaderBottomRight, model ) }"/>
+</mx:Canvas>

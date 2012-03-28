@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (c) 2008 by Betware Ltd.
+// Holtasmári 1, 201 Kópavogur, Iceland.
+// All rights reserved.
+//
+// This software is the confidential and proprietary information
+// of Betware Ltd. ("Confidential Information").  You
+// shall not disclose such Confidential Information and shall use
+// it only in accordance with the terms of the license agreement
+// you entered into with Betware Ltd.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+
+<!--
+	Generic help popup class. Help popups display a text with horizontal scroll bar. The popup 
+	accepts small subset of HTML text formatting tags.
+-->
+<DsPopup 
+		xmlns="com.betware.ds.games.view.components.popups.*" 
+		xmlns:mx="http://www.adobe.com/2006/mxml"
+ 		xmlns:dscomps="com.betware.ds.games.view.components.*"
+ 		width="{POPUP_WIDTH}"
+		statusBarHeight="{POPUP_STATUSBAR_HEIGHT}"
+		dragBarHeight="{POPUP_TITLEBAR_HEIGHT}"
+		topButtonsBarHeight="{POPUP_TITLEBAR_HEIGHT}"
+		topButtonsPaddingRight="17"
+		draggable="true"
+		printable="true"
+		styleName="dsHelpPopupStyle"
+		initialize="onInitialize()">
+		
+	<mx:Metadata>
+	 	// Name of the CSS style declaration that specifies styles for the title bar.
+		[Style(name="titleBarStyleName", type="String", inherit="yes")]
+		
+ 	 	// Name of the CSS style declaration that specifies styles for the title label.
+		[Style(name="titleLabelStyleName", type="String", inherit="yes")]
+
+	 	// Name of the CSS style declaration that specifies styles for the text area.
+		[Style(name="textAreaStyleName", type="String", inherit="yes")]
+		
+	 	// Name of the CSS style declaration that specifies styles for the text area.
+		[Style(name="textAreaBackgroundStyleName", type="String", inherit="yes")]
+		
+	 	// Name of the CSS style declaration that specifies text area's top padding.
+		[Style(name="textAreaPaddingTop", type="Number", inherit="yes")]
+
+	 	// Name of the CSS style declaration that specifies text area's bottom padding.
+		[Style(name="textAreaPaddingBottom", type="Number", inherit="yes")]
+		
+		// Dispatched when the user selects the close button.
+		[Event(name="close", type="mx.events.CloseEvent")]
+		
+		// Dispatched when the user selects the print button.
+		[Event(name="print", type="flash.events.Event")]
+		
+	</mx:Metadata>
+	
+	<mx:Style>
+		.dsHelpPopupStyle
+		{
+			border-skin: ClassReference("com.betware.ds.games.view.components.skins.DsRectangularBorder");
+			
+			titleBarStyleName: dsHelpPopupTitleBarStyle;
+			titleLabelStyleName: dsHelpPopupsTitleLabelStyle;
+			textAreaStyleName: dsHelpPopupTextAreaStyle;
+			textAreaBackgroundStyleName: dsHelpPopupTextAreaBackgroundStyle;
+			statusBarStyleName: dsHelpPopupStatusBarStyle;
+			printButtonStyleName: dsPopupPrintButtonStyle;
+			okButtonStyleName: dsHelpPopupOkButtonStyle;	
+			closeButtonStyleName: dsHelpPopupCloseButtonStyle;
+			
+			corner-radius: 5;
+			
+			modalTransparency: 0;
+			modalTransparencyBlur: 0;
+			
+			text-area-padding-bottom: 0;
+			text-area-padding-top: 13;
+
+			drop-shadow-enabled: true;
+			drop-shadow-angle: 90;
+			drop-shadow-distance: 3;
+			drop-shadow-color: 0;
+			drop-shadow-alpha: 0.8;
+			shadow-blur-x: 180;
+			shadow-blur-y: 180;
+		}
+		
+		.dsHelpPopupTitleBarStyle
+		{
+			border-style: solid;
+			border-thickness: 0;
+			background-fill-colors: #FFCC33, #E5AF00;
+			border-skin: ClassReference("com.betware.ds.games.view.components.skins.SimpleGradientBorder");
+			top-corner-radius: 5;
+			bottom-corner-radius: 0;
+			padding-left: 23;
+			padding-right: 25;
+		}
+				
+		.dsHelpPopupsTitleLabelStyle
+		{
+			font-family: SignaColumn-Book;
+			font-weight: bold;
+			font-size: 14;
+			color: #044B31;
+		}
+				
+		.dsHelpPopupTextAreaStyle
+		{
+			font-family: SignaColumn-Book;
+			font-weight: normal;
+			font-size: 11;
+			color: #000000;
+			
+			border-style: none;
+			background-alpha: 0;
+
+			padding-top: 0;
+			padding-bottom: 0;
+			padding-left: 23;
+			padding-right: 40;
+			
+			focus-thickness: 0;
+		}
+		
+		.dsHelpPopupTextAreaBackgroundStyle
+		{
+			border-style: none;
+	
+			/* POPUP_TITLEBAR_HEIGHT */
+ 			background-gradient-y-delta: 41;
+ 			background-fill-colors: #FFFFFF, #E3E3E3;
+			border-skin: ClassReference("com.betware.ds.games.view.components.skins.DsRectangularBorder");
+
+        	corner-radius: 5;
+        	rounded-bottom-corners: false;
+        	vertical-gap: 0;
+		}
+		
+		.dsHelpPopupStatusBarStyle
+		{
+			border-style:solid;
+			border-thickness: 0;
+			background-fill-colors: #E3E3E3, #D8D8D8;
+			border-skin: ClassReference("com.betware.ds.games.view.components.skins.SimpleGradientBorder");
+			top-corner-radius: 0;
+			bottom-corner-radius: 5;
+		}
+
+		.dsPopupVScrollBarStyle 
+		{
+			thumbSkin: ClassReference("dk.lbi.skins.DSScrollbarSkin");
+            trackSkin: ClassReference("dk.lbi.skins.DSScrollbarSkin");    
+            upArrowSkin: ClassReference("dk.lbi.skins.DSScrollbarSkin");
+            downArrowSkin: ClassReference("dk.lbi.skins.DSScrollbarSkin");
+            padding-right: 25;
+            drop-shadow-enabled: true;
+			drop-shadow-distance: 1;
+		}
+
+	</mx:Style>
+
+	<mx:Script>
+		<![CDATA[
+			import com.betware.ds.games.view.components.events.DsTextEvent;
+			import com.betware.ds.games.model.DsModelLocator;
+			import com.betware.ds.games.view.components.DsTextArea;
+
+			import mx.managers.PopUpManager;
+			import mx.core.Application;
+			
+			///////////////////////////////////////////////////
+			// METHODS
+			///////////////////////////////////////////////////
+		    
+		    public override function styleChanged(styleProp:String):void
+		    {
+		        super.styleChanged(styleProp);
+
+ 		        const allStyles:Boolean = (!styleProp || styleProp == "styleName");
+		        
+		        if(allStyles || styleProp == "titleBarStyleName")
+		        {
+ 		            if(titleBarArea != null && getStyle("titleBarStyleName"))
+           				titleBarArea.styleName = getStyle("titleBarStyleName");
+		        }
+
+		        if(allStyles || styleProp == "titleLabelStyleName")
+		        {
+		            if(titleLabel != null && getStyle("titleLabelStyleName"))
+           				titleLabel.styleName = getStyle("titleLabelStyleName");
+		        }
+
+ 		        if(allStyles || styleProp == "textAreaStyleName")
+		        {
+		            if(textArea != null && getStyle("textAreaStyleName"))
+						textArea.styleName = getStyle("textAreaStyleName");
+		        }
+		        
+		        if(allStyles || styleProp == "textAreaPaddingTop")
+		        {
+		        	if(textAreaPaddingTopSpacer != null)
+		        	{
+		        		var taPaddingTop: Number = getStyle("textAreaPaddingTop");		
+		        		if(!isNaN(taPaddingTop))
+		        			textAreaPaddingTopSpacer.height = taPaddingTop;
+		        	}
+		        }
+		        
+		        if(allStyles || styleProp == "textAreaPaddingBottom")
+		        {
+		        	if(textAreaPaddingBottomSpacer != null)
+		        	{
+		        		var taPaddingBottom: Number = getStyle("textAreaPaddingBottom");		
+		        		if(!isNaN(taPaddingBottom))
+		        			textAreaPaddingBottomSpacer.height = taPaddingBottom;
+		        	}	
+		        }
+
+ 		        if(allStyles || styleProp == "textAreaBackgroundStyleName")
+		        {
+		            if(popupContent != null && getStyle("textAreaBackgroundStyleName"))
+						popupContent.styleName = getStyle("textAreaBackgroundStyleName");
+		        }
+  		    }
+  		    
+  		    private function onInitialize():void
+  		    {
+  		    	initializeShowEffect([textArea]);
+  		    	
+  		    	textArea.maxHeight = POPUP_MAX_HEIGHT 
+  		    					- POPUP_TITLEBAR_HEIGHT 
+  		    					- POPUP_STATUSBAR_HEIGHT 
+  		    					- textAreaPaddingBottomSpacer.height 
+  		    					- textAreaPaddingTopSpacer.height;
+  		    					
+  		    	textArea.minHeight = POPUP_MIN_HEIGHT
+  		    					- POPUP_TITLEBAR_HEIGHT 
+  		    					- POPUP_STATUSBAR_HEIGHT 
+  		    					- textAreaPaddingBottomSpacer.height 
+  		    					- textAreaPaddingTopSpacer.height;
+  		    					
+  		    	applyCss(textArea, cssStyle);
+  		    }
+			
+ 			private function onExternalLink(event:DsTextEvent):void
+ 			{
+ 				// TODO: This is only example how external link can be handled. It must be moved to
+ 				// a separate class, so we won't have to implemented it any time we want to use
+ 				// this feature. 
+ 				var helpPopup:DsHelpPopup = new DsHelpPopup();
+				 		
+				helpPopup.title 		= DsModelLocator.getProperty("ds.lotto.helppopup.title");
+				helpPopup.okButtonLabel	= DsModelLocator.getProperty("ds.lotto.helppopup.ok.label");
+				helpPopup.text			= DsModelLocator.getHelpText(event.text);
+				helpPopup.cssStyle		= DsModelLocator.getCssStyle(event.text);
+				
+				PopUpManager.addPopUp(helpPopup, Application.application as Application, true);
+				PopUpManager.centerPopUp(helpPopup);
+ 			}
+
+  		    private static function applyCss(ta:DsTextArea, css:String):void
+ 		    {
+				if(css != null && css.length > 0)
+				{
+					var style:StyleSheet = new StyleSheet();
+				
+					style.parseCSS(css);
+					ta.styleSheet = style;
+				}	
+ 		    }
+ 		    
+			///////////////////////////////////////////////////
+			// VARIABLES
+			///////////////////////////////////////////////////
+
+			[Bindable]
+			// This text is placed in the popup's title.
+			public var title:String;
+			
+			[Bindable]
+			// The popup's text. It can contain a small subset of HTML text formatting tags.
+			public var text:String;
+			
+			// The CSS style applied to the popup's text.
+			public var cssStyle:String;
+			
+			protected static const POPUP_WIDTH:Number				= 550;
+			protected static const POPUP_MAX_HEIGHT:Number			= 400;
+			protected static const POPUP_MIN_HEIGHT:Number			= 202;
+			protected static const POPUP_TITLEBAR_HEIGHT:Number 	= 41;
+			protected static const POPUP_STATUSBAR_HEIGHT:Number	= 59;
+			protected static const TEXTAREA_MIN_HEIGHT:Number		= 78;
+			protected static const TEXTAREA_MAX_HEIGHT:Number		= 300;
+		]]>
+	</mx:Script>
+
+	<content>
+		<mx:VBox 
+				id="popupContent"
+				width="100%"
+				verticalGap="0"
+				horizontalScrollPolicy="off" verticalScrollPolicy="off">
+
+			<!-- Help popup's title bar. -->
+			<mx:HBox 
+					id="titleBarArea" 
+					width="100%" height="{POPUP_TITLEBAR_HEIGHT}"
+					horizontalAlign="left" verticalAlign="middle" 
+					horizontalScrollPolicy="off" verticalScrollPolicy="off"
+					paddingLeft="22" paddingTop="3">
+					
+				<mx:Label id="titleLabel" text="{title}" textAlign="left" width="100%"/>
+			</mx:HBox>
+			
+			<mx:Spacer id="textAreaPaddingTopSpacer" height="0"/>
+			
+			<!-- Help popup's text area. -->
+			<dscomps:DsTextArea 
+					id="textArea" 
+					width="{POPUP_WIDTH}" 
+					condenseWhite="true" 
+					tabEnabled="false" 
+					editable="false" selectable="false" resizable="true"
+					horizontalScrollPolicy="off"
+					verticalScrollBarStyleName="dsPopupVScrollBarStyle" 
+					htmlText="{text}"
+					externallink="onExternalLink(event)"/>
+
+			<mx:Spacer id="textAreaPaddingBottomSpacer" height="0"/>
+
+		</mx:VBox>
+	</content>
+	
+</DsPopup>

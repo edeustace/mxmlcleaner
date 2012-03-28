@@ -1,0 +1,19 @@
+#	Namespace groupings for mxml sorting
+#	the order of the lines describes what comes first
+#	in this example the first item will be the xmlns:mx, followed by xmlns, then any other namespace
+#	if the line starts with a / - it is treated as a regular expression
+#	if the line has a "," all the values on that line are considered a group.
+#	mixing groups and regular expressions is not supported.
+#
+/xmlns:mx$/
+xmlns
+# allow a namespace with mx and one or more letter or any chars without m or x
+/xmlns:(mx.+|[^mx].*)/
+#implements
+#id
+#height,width
+#x,y
+#addedToStage,change,creationComplete,initialize,preInitialize
+#/.*?Align/
+#horizontalScrollPolicy,verticalScrollPolicy
+#backgroundAlpha,backgroundImage

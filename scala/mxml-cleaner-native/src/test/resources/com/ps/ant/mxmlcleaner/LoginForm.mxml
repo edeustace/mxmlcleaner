@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+		 xmlns:ac="com.adobe.ac.*"
+		 xmlns:controls="ds.hindu.common.view.controls.*"
+		 xmlns:passwordreset="ds.hindu.passwordreset.*"
+		 xmlns:forgotusername="ds.hindu.login.view.*"
+		 xmlns:popups="ds.hindu.common.view.popups.*"
+		 horizontalScrollPolicy="off"
+		 verticalScrollPolicy="off"
+		 verticalGap="9"
+		 width="158"
+		 xmlns:view="ds.hindu.login.view.*" 
+		 xmlns:textinputs="ds.hindu.common.view.controls.text.textinputs.*">
+	
+	
+	<mx:Metadata>
+		[ResourceBundle("LoginPanel")]
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.FocusManager;
+			import ds.hindu.login.events.LoginEvent;
+			import ds.hindu.model.Resources;
+			import ds.hindu.model.Resources;
+			import com.betware.ds.games.view.components.popups.DsInfoPopup;
+			import com.betware.ds.games.view.components.popups.DsInfoPopup;
+			//			import ds.hindu.common.view.popups.DsPopup;
+			import assets.stylesheets.TextStyle;
+			
+			import ds.hindu.common.model.constants.HinduRegions;
+			import ds.hindu.common.util.DSAlert;
+			import ds.hindu.login.model.pm.LoginPM;
+			import ds.hindu.util.RegionSkinUtil;
+			import ds.hindu.common.view.*;
+			import mx.managers.PopUpManager;
+			
+			import mx.events.CloseEvent;
+			
+			private var _pm:LoginPM;
+			
+			[Bindable]
+			public function get pm():LoginPM
+			{
+				return _pm;
+			}
+			
+			public function set pm(value:LoginPM):void
+			{
+				_pm = value;
+				pm.addEventListener(LoginEvent.LOGIN_FAILED, onLoginFailed);
+			}
+			
+			private static const BUNDLE:String = "LoginPanel";
+			
+			
+			[Bindable]
+			private static var FORGOT_PASSWORD:String="FORGOT_PASSWORD";
+			[Bindable]
+			private static var REGISTER:String="REGISTER";
+			[Bindable]
+			private static var LOGIN:String="LOGIN";
+			[Bindable]
+			private static var HELP:String="HELP";
+			[Bindable]
+			private static var CONTACT:String="CONTACT";
+			[Bindable]
+			private static var FORGOT_USERNAME:String="FORGOT_USERNAME";
+			
+			[Bindable]
+			public var showForgotPasswordPopup:Boolean;
+			
+			[Bindable]
+			public var serverMessage:String;
+			
+			public function initFocus():void
+			{
+				userName.setFocus();
+				if(userName.text == "")
+					userName.defaultText = "";
+			}
+			
+			
+			private function set setCurrentRegionChange(value:String):void
+			{
+				//				updateLoginButton();
+			}
+			
+			private function updateLoginButton():void
+			{
+				//				setLoginButton(pm.navigationModel.currentRegion);
+			}
+			
+			private function onForgottenUsername():void
+			{
+				//				DSAlert.showInfo(Resources.getInstance().getString(BUNDLE, 'CONTACT_CUSTOMER_SERVICE'));
+				addEventListener(Event.CLOSE, closeForgotUserNameButtonEvent);
+				forgotusernamepopup.showPopUp=true;
+			}
+			
+			
+			//TODO: hmm .. switches..
+			private function handleClick(target:String):void
+			{
+				switch (target)
+				{
+					case REGISTER:
+						pm.register();
+						break;
+					case FORGOT_PASSWORD:
+						forgotPasswordPopup.showPopUp=true;
+						break;
+					case FORGOT_USERNAME:
+						onForgottenUsername();
+						break;
+					case LOGIN:
+						pm.login(userName.text, password.text);
+						break;
+					default:
+						break;
+				}
+			}
+			
+			private function closeForgotUserNameButtonEvent():void
+			{
+				PopUpManager.removePopUp(this);
+				dispatchEvent(new CloseEvent(CloseEvent.CLOSE));
+			}
+			
+			private function setLoginButton(region:String):void
+			{
+				loginButton.label="OK";
+				loginButton.setStyle("skin", RegionSkinUtil.getDSSmallGlassButtonSkin(region, HinduRegions.TIPS));
+			}
+			
+			private function set resetInputFieldsOnLogout(isLoggedIn:Boolean):void
+			{
+				if (!isLoggedIn)
+				{
+					resetInputFields();
+				}
+			}
+			
+			
+			private function resetInputFields() : void 
+			{
+				password.text = "";
+				password.setFocus();
+				password.validateNow();
+				userName.text = "";
+				userName.setFocus();
+				userName.validateNow();
+				setFocus();
+			}
+			
+			private function onLoginFailed(event:Event):void
+			{
+				var loginEvent:LoginEvent=event as LoginEvent;
+				DSAlert.showInfo(loginEvent.message + "\n(" + loginEvent.code + ")");
+			}
+			private function setUserNameDefault():void
+			{
+				if(userName.defaultText == "")
+				{
+					userName.defaultText = Resources.getInstance().getString( BUNDLE, 'USERNAME' );
+				}
+			}
+			
+			private function clearDefaultText():void
+			{
+				if(userName.text == Resources.getInstance().getString( BUNDLE, 'USERNAME' ))
+					userName.text = "";
+			}
+			
+			private function setDefaultText():void
+			{
+				if(userName.text == "")
+					userName.text =  Resources.getInstance().getString( BUNDLE, 'USERNAME' );
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Binding source="pm.navigationModel.currentRegion"
+				destination="setCurrentRegionChange"/>
+	
+	<mx:Binding source="pm.userManager.isLoggedIn"
+				destination="resetInputFieldsOnLogout"/>
+	
+	<mx:Label text="{ Resources.getInstance().getString( BUNDLE, 'LOGIN' ) }"
+			  styleName="signaColumnBold11x004b32"
+			  />
+	
+	<textinputs:DanishAtSymbolFormTextInput
+		id="userName"
+		defaultText="{ Resources.getInstance().getString( BUNDLE, 'USERNAME' ) }"
+		width="100%"
+		tabEnabled="true"
+		tabIndex="1"
+		enter="handleClick(LOGIN)"
+		focusIn="clearDefaultText()"
+		/>
+	
+	<textinputs:FormTextInput id="password"
+							  defaultText="{ Resources.getInstance().getString( BUNDLE, 'PASSWORD' ) }"
+							  displayAsPassword="true"
+							  width="100%"
+							  tabEnabled="true"
+							  tabIndex="2"
+							  enter="handleClick(LOGIN)"
+							  focusIn="setDefaultText()"
+							  />
+	
+	<mx:Canvas width="100%">
+		<mx:Button skin="{ null }"
+				   id="btnForgotPassword"
+				   useHandCursor="true"
+				   buttonMode="true"
+				   label="{ Resources.getInstance().getString( BUNDLE, 'FORGOT_PASSWORD' ) }"
+				   click="handleClick(FORGOT_PASSWORD)"
+				   styleName="signaColumnBold9p004b32"
+				   focusAlpha="0"
+				   left="-12"/>
+		<mx:Button skin="{ null }"
+				   y="10"
+				   id="btnForgotUsername"
+				   useHandCursor="true"
+				   buttonMode="true"
+				   label="{ Resources.getInstance().getString( BUNDLE, 'FORGOT_USERNAME' ) }"
+				   click="handleClick(FORGOT_USERNAME)"
+				   styleName="signaColumnBold9p004b32"
+				   focusAlpha="0"
+				   left="-12"/>
+		<mx:Button id="loginButton"
+				   click="handleClick(LOGIN)"
+				   useHandCursor="true"
+				   buttonMode="true"
+				   enabled="{ !pm.state.locked }"
+				   alpha="{ pm.state.locked ? 0.5 : 1 }"
+				   label="{ Resources.getInstance().getString( BUNDLE, 'LOGIN_BUTTON' ) }"
+				   skin="DSSmallGlassButtonGreen"
+				   focusAlpha="0"
+				   right="0"
+				   tabEnabled="true"
+				   tabIndex="3"/>
+	</mx:Canvas>
+	<mx:HRule width="150"
+			  strokeColor="#E0dfe0"/>
+	<mx:Label text="{Resources.getInstance().getString( BUNDLE, 'REGISTER_HEADING' ) }"
+			  styleName="signaColumnBold14p333333"/>
+	<mx:Text width="150"
+			 text="{Resources.getInstance().getString( BUNDLE, 'REGISTER' ) }"/>
+	<mx:Canvas width="100%">
+		<mx:Button skin="DSSmallGlassButtonGreen"
+				   id="registerButton"
+				   buttonMode="true"
+				   useHandCursor="true"
+				   label="{ Resources.getInstance().getString( BUNDLE, 'CREATE_ACCOUNT' ) }"
+				   click="handleClick(REGISTER)"
+				   right="0"/>
+		<mx:Spacer height="10" />	
+	</mx:Canvas>
+	<ac:PopUp id="forgotPasswordPopup">
+		<ac:content>
+			<passwordreset:PasswordResetPopup close="forgotPasswordPopup.showPopUp = false"/>
+		</ac:content>
+	</ac:PopUp>
+	<ac:PopUp id="forgotusernamepopup">
+		<ac:content>
+			<forgotusername:ForgotUserNamePopup close="forgotusernamepopup.showPopUp = false"/>
+		</ac:content>
+	</ac:PopUp>
+</mx:VBox>

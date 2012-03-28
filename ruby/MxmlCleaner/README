@@ -1,0 +1,11 @@
+== MxmlCleaner
+Be sure to have a back up of your files before you execute the clean.
+This script comes with no warranty, and the author will not be held liable for problems caused by executing the script.
+
+To run the cleaner do the following:
+1. cd to the lib folder
+2. ruby main.rb ${the_path_to_a_folder_that_contains_mxml_files}
+eg:
+ruby main.rb C:\dev\my-project\src\main\flex
+
+

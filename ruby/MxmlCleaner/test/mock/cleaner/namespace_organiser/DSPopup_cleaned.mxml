@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:buttons1="com.test.common.view.buttons.*"
+	creationComplete="onCreationComplete()"
+	height="300"
+	horizontalScrollPolicy="off"
+	styleName="dsPopupDefaultStyle"
+	verticalScrollPolicy="off"
+	width="400">
+
+<!--
+	Base class for all popups having close, print buttons and a status bar. The status bar
+	has OK button which behaves like the closing one.
+-->
+
+
+	<mx:Metadata>
+	 	// Name of the CSS style declaration that specifies styles for the content area.
+		[Style(name="contentAreaStyleName", type="String", inherit="yes")]
+
+	 	// Name of the CSS style declaration that specifies styles for the status bar.
+		[Style(name="statusBarStyleName", type="String", inherit="yes")]
+
+	 	// Name of the CSS style declaration that specifies styles for the close button
+	 	// displayed in the right-top corner of the popup.
+		[Style(name="closeButtonStyleName", type="String", inherit="yes")]
+
+	 	// Name of the CSS style declaration that specifies styles for the print button
+	 	// displayed next to the close button.
+		[Style(name="printButtonStyleName", type="String", inherit="yes")]
+
+	 	// Name of the CSS style declaration that specifies styles for the resize button
+	 	// displayed in the rigth-bottom corner of the popup.
+		[Style(name="resizeButtonStyleName", type="String", inherit="yes")]
+
+	 	// Name of the CSS style declaration that specifies styles for the ok button
+	 	// displayed in the middle of the popup's status bar.
+		[Style(name="okButtonStyleName", type="String", inherit="yes")]
+
+		// Number of pixels between the close button's right border and
+		// the popup's right border. Default: 0.
+ 		[Style(name="topButtonsBarHeight", type="Number", inherit="yes")]
+
+		// Number of pixels between the close and print buttons' top border and
+		// the popup's top border. Default: 0.
+		[Style(name="topButtonsPaddingRight", type="Number", inherit="yes")]
+
+		// See description of Panel class in Flex documentation. Default: 0.5
+		[Style(name="modalTransparency", type="Number", inherit="yes")]
+
+		// See description of Panel class in Flex documentation. Default: 3
+		[Style(name="modalTransparencyBlur", type="Number", inherit="yes")]
+
+		// See description of Panel class in Flex documentation. Default: #DDDDDD
+		[Style(name="modalTransparencyColor", type="uint", format="Color", inherit="yes")]
+
+		// See description of Panel class in Flex documentation. Default: 100
+		[Style(name="modalTransparencyDuration", type="Number", format="Time", inherit="yes")]
+
+		// Dispatched when the user selects the close button.
+		[Event(name="close", type="mx.events.CloseEvent")]
+
+		// Dispatched when the user selects the print button.
+		[Event(name="print", type="mx.events.Event")]
+
+		[DefaultProperty("contentArea")]
+	</mx:Metadata>
+
+
+
+	<mx:Script>
+		<![CDATA[
+			import com.test.common.view.CommonAssets;
+			import com.test.common.view.popups.event.DsPopupEvent;
+			import mx.controls.Label;
+			import mx.core.UIComponent;
+			import mx.core.Container;
+			import mx.core.UITextField;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+
+			//import com.betware.ds.games.util.debug.DEBUG;
+
+			///////////////////////////////////////////////////////////////////
+			// PROPERTIES
+			///////////////////////////////////////////////////////////////////
+
+			// Use this property to add child controls to the popup's content area - the area
+			// between top borders of popup and its status bar.
+			//
+			// Example:
+			//	<content>
+			//		<mx:Button label="Hit me"/>
+			//	</content>
+			//
+			public function set content(children:Array):void
+			{
+				_contentChildren = children;
+				_contentChildrenChanged = true;
+
+				invalidateProperties();
+			}
+
+			// Use this property to add child controls to the popup's status bar. The status bar
+			// is located at the bottom of the popup. By default the bar contains OK button which
+			// behaves like the close button.
+			//
+			// Example:
+			//	<statusBar>
+			//		<mx:Button label="No, hit me"/>
+			//	</statusBar>
+			//
+			public function set statusBar(children:Array):void
+			{
+				_statusBarChildren = children;
+				_statusBarChildrenChanged = true;
+
+				invalidateProperties();
+			}
+
+			// Flag decides if the popup is resizeable. For resizeable popups a small button
+			// apears in the bottom right corner, when the button is dragged, the popup resizes.
+			public function set resizeable(value:Boolean):void
+			{
+				_resizeable = value;
+				_resizeableChanged = true;
+
+				invalidateProperties();
+			}
+
+			public function get resizeable():Boolean
+			{
+				return _resizeable;
+			}
+
+			// Flag decides if the popup is draggable. For draggable popups a top part of the popup
+			// behaves like a drag bar. When user presses mouse button down on it and moves
+			// the mouse pointer, the popups window follows the mouse. The height of the drag bar
+			// is controlled by dragBarHeight property - for windows with title bar it should be set
+			// to the height of the title bar.
+			public function set draggable(value:Boolean):void
+			{
+				_draggable = value;
+				_draggableChanged = true;
+
+				invalidateProperties();
+			}
+
+			public function get draggable():Boolean
+			{
+				return _draggable;
+			}
+
+			// Flag decides if the popup is printable. For printable popups the print button appears
+			// next to the close button.
+			public function set printable(value:Boolean):void
+			{
+				_printable = value;
+				_printableChanged = true;
+
+				invalidateProperties();
+			}
+
+			public function get printable():Boolean
+			{
+				return _printable;
+			}
+
+			// Height of the popups status bar.
+ 			public function set statusBarHeight(value:Number):void
+			{
+				//DEBUG.ASSERT(value >= 0 && value <= width);
+				_statusBarHeight = value;
+			}
+
+			public function get statusBarHeight():Number
+			{
+				return _statusBarHeight
+			}
+
+			// See description of draggable property for more details.
+			public function set dragBarHeight(value:Number):void
+			{
+				//DEBUG.ASSERT(value >= 0 && value <= width);
+				_dragBarHeight = value;
+			}
+
+			public function get dragBarHeight():Number
+			{
+				return _dragBarHeight;
+			}
+
+			///////////////////////////////////////////////////////////////////
+			// METHODS
+			///////////////////////////////////////////////////////////////////
+
+		    public override function styleChanged(styleProp:String):void
+		    {
+		        super.styleChanged(styleProp);
+
+		        const allStyles:Boolean = (!styleProp || styleProp == "styleName");
+
+		        if(allStyles || styleProp == "statusBarStyleName")
+		        {
+		            if(statusBarArea != null)
+           				statusBarArea.styleName = getStyle("statusBarStyleName");
+		        }
+
+		        if(allStyles || styleProp == "contentAreaStyleName")
+		        {
+		            if(contentArea != null)
+           				contentArea.styleName = getStyle("contentAreaStyleName");
+		        }
+
+		        if(allStyles || styleProp == "closeButtonStyleName")
+		        {
+		            if(closeButton != null)
+           				closeButton.styleName = getStyle("closeButtonStyleName");
+		        }
+
+ 		        if(allStyles || styleProp == "printButtonStyleName")
+		        {
+		            if(printButton != null)
+           				printButton.styleName = getStyle("printButtonStyleName");
+		        }
+
+		        if(allStyles || styleProp == "resizeButtonStyleName")
+		        {
+		            if(resizeButton != null)
+           				resizeButton.styleName = getStyle("resizeButtonStyleName");
+		        }
+
+		        if(allStyles || styleProp == "okButtonStyleName")
+		        {
+		            if(okButton != null)
+           				okButton.styleName = getStyle("okButtonStyleName");
+		        }
+
+		        if(allStyles || styleProp == "topButtonsBarHight")
+		        {
+		            if(topButtonsBar != null && closeButton != null)
+		            {
+           				const barHeight:Number = getStyle("topButtonsBarHeight");
+
+           				if(!isNaN(barHeight))
+           					topButtonsBar.height = barHeight;
+           			}
+		        }
+
+		        if(allStyles || styleProp == "topButtonsPaddingRight")
+		        {
+		            if(topButtonsBar != null)
+		            {
+           				const paddingRight:Number = getStyle("topButtonsPaddingRight");
+
+           				if(!isNaN(paddingRight))
+           					topButtonsBar.setStyle("paddingRight", paddingRight);
+           			}
+		        }
+		    }
+
+		    protected override function commitProperties():void
+		    {
+		        super.commitProperties();
+
+		        if(_contentChildrenChanged)
+		        {
+		        	_contentChildrenChanged = false;
+         			addChildren(_contentChildren, contentArea);
+		        }
+
+		        if(_statusBarChildrenChanged)
+		        {
+		        	_statusBarChildrenChanged = false;
+	         		addChildren(_statusBarChildren, statusBarArea);
+		        }
+
+		        if(_resizeableChanged)
+		        {
+		        	_resizeableChanged = false;
+
+		        	resizeButton.enabled = _resizeable;
+		        	resizeButton.visible = _resizeable;
+		        }
+
+		        if(_draggableChanged)
+		        {
+		        	_draggableChanged = false;
+
+		        	if(_draggable)
+		        		addEventListener(MouseEvent.MOUSE_DOWN, dragStartHandler);
+		        	else
+		        		removeEventListener(MouseEvent.MOUSE_DOWN, dragStartHandler);
+		        }
+
+		        if(_printableChanged)
+		        {
+		        	_printableChanged = false;
+
+		        	if(printButton != null)
+		        	{
+		        		printButton.visible = _printable;
+		        		printButton.enabled	= _printable;
+		        	}
+		        }
+		    }
+
+			protected function close(buttonId:String = NOTHING_PRESSED):void
+			{
+				dispatchEvent(new DsPopupEvent(DsPopupEvent.CLOSE_POPUP, buttonId));
+				PopUpManager.removePopUp(this);
+			}
+
+			protected function print():void
+			{
+				dispatchEvent(new Event(PRINT_EVENT));
+			}
+
+    		private function onCreationComplete():void
+			{
+           		// Apply all custom styles.
+           		styleChanged(null);
+
+           		// By default the popup isn't resizeable, printable and draggable.
+           		// Using private variables as default values we don't loose changes
+           		// done by subcomponents.
+           		resizeable 	= _resizeable;
+           		draggable	= _draggable;
+           		printable	= _printable;
+
+           		// Bring print, close and resize buttons to the popup's front.
+           		setChildIndex(topButtonsBar, numChildren - 1);
+           		setChildIndex(resizeButton, numChildren - 1);
+			}
+
+			private function addChildren(children:Array, parent:Container):void
+			{
+				if(children != null)
+				{
+					parent.removeAllChildren();
+
+					for each(var child:UIComponent in children)
+						parent.addChild(child);
+				}
+			}
+
+	        //
+	        // Three functions handling popup drag&drop behaviour.
+	        //
+
+	        private function dragStartHandler(event:MouseEvent):void
+	        {
+            	// If the user clicked on the drag bar start the drag
+            	// process.
+            	if(mouseY < _dragBarHeight)
+            	{
+                	if(isDragAware(event.target))
+                	{
+	                	addEventListener(MouseEvent.MOUSE_UP, dragStopHandler);
+	                	parent.addEventListener(MouseEvent.ROLL_OUT, dragStopHandler);
+
+	                	// Bring the popup to the front.
+	                	parent.setChildIndex(this, parent.numChildren - 1);
+
+						// Apply some drag&drop special effects
+		                alpha = dragAlpha;
+
+	                	startDrag();
+                	}
+            	}
+        	}
+
+        	// This function implements a naive algoritm deciding which type of controls are
+        	// drag aware - the controls overlaying the drag bar (eg. we don't want to start
+        	// dragging the popup when the close button was pressed down).
+        	private static function isDragAware(obj:Object):Boolean
+        	{
+        		// This's a part of container representing the drag bar.
+        		if((obj as Container) != null)
+        			return true;
+
+        		// This's a label placed on the title bar.
+        		if((obj as UITextField) != null && (obj.parent as Label) != null)
+        			return true;
+
+        		return false;
+        	}
+
+	        private function dragStopHandler(event:MouseEvent):void
+	        {
+        	    stopDrag();
+
+        	    alpha = 1.0;
+
+               	removeEventListener(MouseEvent.MOUSE_UP, dragStopHandler);
+               	parent.removeEventListener(MouseEvent.ROLL_OUT, dragStopHandler);
+        	}
+
+        	//
+        	// Three functions handling popup resize behaviour.
+        	//
+
+			private function resizeDownHandler(event:MouseEvent):void
+			{
+	            parent.addEventListener(MouseEvent.MOUSE_MOVE, resizeMoveHandler);
+	            parent.addEventListener(MouseEvent.MOUSE_UP, resizeUpHandler);
+			}
+
+        	private function resizeMoveHandler(event:MouseEvent):void
+        	{
+	            const newWidth:Number	= parent.mouseX - x;
+	            const newHeight:Number 	= parent.mouseY - y;
+
+	            if(newWidth > minWidth && newWidth < maxWidth)
+	                width = newWidth;
+
+	            if(newHeight > minHeight && newHeight < maxHeight)
+	                height = newHeight;
+        	}
+
+        	private function resizeUpHandler(event:MouseEvent):void
+        	{
+	            parent.removeEventListener(MouseEvent.MOUSE_MOVE, resizeMoveHandler);
+	            parent.removeEventListener(MouseEvent.MOUSE_UP, resizeUpHandler);
+        	}
+
+			///////////////////////////////////////////////////
+			// VARIABLES
+			///////////////////////////////////////////////////
+			public static const PRINT_EVENT:String 		= "print";
+
+			public static const NOTHING_PRESSED:String 	= "nothing";
+			public static const OK_BUTTON:String 		= "ok";
+			public static const CLOSE_BUTTON:String		= "close";
+
+			[Bindable]
+			public var okButtonLabel:String = "OK";
+
+			[Bindable]
+			public var printButtonLabel:String = "Print";
+
+			// It controls popup's transparency when it's dragged.
+			public var dragAlpha:Number	= 1.0;
+
+			// See description of draggable property for more details.
+			private var _dragBarHeight:Number = 20;
+
+			[Bindable]
+			// Height of the popups status bar.
+			private var _statusBarHeight:Number = 66;
+
+			private var _resizeable:Boolean 		= false;
+			private var _resizeableChanged:Boolean 	= false;
+
+			private var _draggable:Boolean 			= false;
+			private var _draggableChanged:Boolean 	= false;
+
+			private var _printable:Boolean 			= false;
+			private var _printableChanged:Boolean	= false;
+
+    		[ArrayElementType("mx.core.UIComponent")]
+			private var _contentChildren:Array;
+			private var _contentChildrenChanged:Boolean = false;
+
+    		[ArrayElementType("mx.core.UIComponent")]
+			private var _statusBarChildren:Array;
+			private var _statusBarChildrenChanged:Boolean = false;
+
+			private var assets : CommonAssets = new CommonAssets();
+		]]>
+	</mx:Script>
+
+	<!-- Resize button - small button in the bottom right corner. -->
+	<mx:Button
+			id="resizeButton"
+			width="15" height="15"
+			bottom="0" right="0"
+			mouseDown="resizeDownHandler(event)"/>
+
+
+	<mx:Canvas right="18" top="10" id="topButtonsBar" >
+		<!-- TODO: skin with close button -->
+		<mx:Button
+			id="closeButton"
+			click="close(CLOSE_BUTTON)"
+			skin="{ assets.closeButton }"
+			overSkin="{ assets.closeButtonOver }"
+			downSkin="{ assets.closeButtonDown }"/>
+	</mx:Canvas>
+
+
+
+	<!-- Bar displaying print and close buttons in the right top corner of the popup. -->
+	<mx:VBox
+			width="100%" height="100%"
+			verticalAlign="bottom"
+			verticalGap="0"
+			horizontalScrollPolicy="off" verticalScrollPolicy="off">
+
+		<!-- Content area. -->
+		<mx:Canvas
+				id="contentArea"
+				width="100%" height="100%"
+				horizontalScrollPolicy="off" verticalScrollPolicy="off"/>
+
+		<!-- Status bar area. -->
+		<mx:Canvas
+				id="statusBarArea"
+				width="100%" height="{_statusBarHeight}"
+				horizontalScrollPolicy="off" verticalScrollPolicy="off">
+
+			<mx:HBox x="37" y="19" height="20" verticalAlign="middle">
+
+				<!--
+				TODO: Skin this with an arrow button.
+				-->
+				<mx:Button
+					skin="{ assets.arrowButton }"
+					downSkin="{ assets.arrowButtonDown }"
+					overSkin="{ assets.arrowButtonOver }"
+					click="print()"/>
+				<mx:Label paddingTop="5" id="printButton" text="{printButtonLabel}" click="print()"/>
+			</mx:HBox>
+
+
+			<mx:HBox
+					width="100%" height="100%"
+					horizontalAlign="center" verticalAlign="middle"
+					horizontalScrollPolicy="off" verticalScrollPolicy="off">
+
+
+				<buttons1:DSGlassButton
+					id="okButton"
+					label="{okButtonLabel}"
+					click="close(OK_BUTTON)"/>
+			</mx:HBox>
+		</mx:Canvas>
+	</mx:VBox>
+
+</mx:Canvas>
+

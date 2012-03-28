@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox
+	xmlns:labels="com.test.lotto.view.news.labels.*"
+	xmlns:texts="com.test.frontpage.view.news.text.*"
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="100%"
+	height="100%" xmlns:controls="com.test.core.view.controls.*">
+
+
+	<mx:Metadata>
+ 		[Event(name="moreNews",type="flash.events.Event")]
+ 		[Event(name="gotoNews",type="flash.events.Event")]
+        [ResourceBundle("LottoNewsTeaserView")]
+    </mx:Metadata>
+
+    <mx:Script>
+    	import com.test.common.model.content.news.teaser.NewsTeaser;
+
+	import mx.formatters.DateFormatter;
+
+    	private static const BUNDLE : String = "LottoNewsTeaserView";
+    	[Bindable] private var currentTeaser : NewsTeaser;
+
+    	private var _teaser : NewsTeaser;
+
+			[Bindable]
+			public function set teaser( value : NewsTeaser ) : void
+			{
+				_teaser = value;
+			}
+
+			public function get teaser() : NewsTeaser
+			{
+				return _teaser;
+			}
+
+			private function formatDate( date : Date ) : String
+			{
+				var formatter : DateFormatter = new DateFormatter();
+				formatter.formatString = resourceManager.getString(BUNDLE, "DATE_FORMAT");
+				return formatter.format( date );
+			}
+    </mx:Script>
+
+ 	<mx:VBox
+		width="100%" height="100%" verticalScrollPolicy="off"
+		verticalGap="0" paddingLeft="0" paddingTop="5" paddingBottom="0">
+
+		<mx:HBox width="100%" horizontalGap="1" height="14">
+			<mx:Box horizontalScrollPolicy="off" verticalScrollPolicy="off">
+				<labels:LottoNewsCategoryText text="{ teaser.category.toUpperCase()}"/>
+			</mx:Box>
+
+			<mx:Box width="100%">
+				<labels:LottoNewsDateText width="100%" text="{ formatDate( teaser.date ) }" textAlign="left" />
+			</mx:Box>
+		</mx:HBox>
+
+		<mx:Canvas id="headline" width="100%" click="dispatchEvent(new Event('gotoNews'))" useHandCursor="true"
+			buttonMode="true" mouseChildren="false">
+			<labels:LottoNewsHeaderText text="{ teaser.headline }"
+				leading="-5" paddingBottom="0" paddingTop="0" />
+		</mx:Canvas>
+
+		<controls:TruncatedText
+			styleName="dsTestViewComponentsLottoNewsNewsTeaserViewBodyText"
+			truncateToFit="false"
+			width="100%" height="100%"
+			text="{ teaser.bodytext }"
+			leading="1"
+			paddingBottom="0"
+			paddingRight="4"
+			click="dispatchEvent(new Event('gotoNews'))"
+			useHandCursor="true"
+			buttonMode="true"
+			mouseChildren="false" />
+
+		<mx:HBox
+			width="100%"
+			height="100%"
+			paddingRight="10"
+			verticalAlign="bottom"
+			horizontalAlign="right">
+
+			<mx:Button
+				id="moreNewsButton"
+				height="20"
+				styleName="lottoNewsPanelMoreNewsButton"
+				label="{ resourceManager.getString( BUNDLE, 'MORE_NEWS' ) }"
+				labelPlacement="left"
+				toggle="false"
+				useHandCursor="true"
+				buttonMode="true"
+				click="dispatchEvent(new Event('moreNews'))" />
+		</mx:HBox>
+
+	</mx:VBox>
+
+</mx:HBox>

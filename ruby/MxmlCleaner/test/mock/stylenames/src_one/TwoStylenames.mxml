@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+	>
+	<pm:FrontPageCampaignPM id="pm" />
+		
+	<view1:CampaignViewer 
+        id="bottom_left"
+        campaign="{pm.campaign1}"
+        left="3"
+        bottom="0"
+        visible="{pm.campaign1Visible}"
+        width="{pm.campaign1Width}"
+        height="{pm.campaign1Height}"
+        styleName="myStyle"
+        />
+	<view1:CampaignViewer
+        id="bottom_left"
+        campaign="{pm.campaign1}"
+        left="3"
+        bottom="0"
+        visible="{pm.campaign1Visible}"
+        width="{pm.campaign1Width}"
+        height="{pm.campaign1Height}"
+        styleName="myStyle2"
+        />
+	
+	
+		
+</mx:Canvas>

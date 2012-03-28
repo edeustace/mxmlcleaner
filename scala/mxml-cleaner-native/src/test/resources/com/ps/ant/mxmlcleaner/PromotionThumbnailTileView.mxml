@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas
+	rollOut="changeOnRollOut()"
+	rollOver="changeOnRollOver()"
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+  	cornerRadius="4"
+  	useHandCursor="true"
+  	buttonMode="true"
+	borderStyle="solid"
+	borderThickness="1"
+	borderColor="#ffffff"
+	height="{ thumbHeight }"
+	width="60"
+	autoLayout="false"
+	currentState="{ pm.currentState }"
+	verticalScrollPolicy="off" horizontalScrollPolicy="off"
+	click="pm.thumbnailSelected();"
+	bottom="0"
+	>
+
+	<mx:Script >
+		<![CDATA[
+			import com.test.frontpage.model.content.promotion.Promotion;
+			import com.test.frontpage.model.pm.PromotionThumbnailPM;
+
+			import flash.display.*;
+
+			[Bindable]
+			public var pm : PromotionThumbnailPM;
+
+			[Bindable] public var thumbHeight:int=31;
+
+			[Bindable]
+			public var promotion : Promotion;
+
+			private function changeOnRollOver():void
+			{
+				//this.setStyle("borderThickness",10);
+				this.setStyle("borderColor","#828282");
+			}
+
+			private function changeOnRollOut():void
+			{
+				//this.setStyle("borderThickness",2);
+				this.setStyle("borderColor","#ffffff");
+			}
+
+		]]>
+	</mx:Script>
+
+	<mx:Image
+		width="60"
+		height="37"
+		id="thumbImage"
+		source="{ pm.promotion.thumbnailURL}"
+		mask="{ imageMask }"
+		/>
+
+	<mx:Canvas id="imageMask"
+		width="{ thumbImage.width }" height="{ thumbImage.height }"
+		borderStyle="solid" borderColor="0"
+		backgroundColor="#000000"
+		cornerRadius="4"
+		visible="false"
+		includeInLayout="false"/>
+
+	 <mx:states>
+ 		<mx:State name="{ PromotionThumbnailPM.LEFT_OFF_STAGE }">
+            <mx:SetProperty target="{this}" name="height" value="21"/>
+            <mx:SetProperty target="{this}" name="x" value="-60"/>
+        </mx:State>
+        <mx:State name="{ PromotionThumbnailPM.LEFT_ON_STAGE }">
+            <mx:SetProperty target="{this}" name="height" value="32"/>
+             <mx:SetProperty target="{this}" name="x" value="0"/>
+        </mx:State>
+        <mx:State name="{ PromotionThumbnailPM.CENTRE_STAGE }">
+            <mx:SetProperty target="{this}" name="height" value="36"/>
+            <mx:SetProperty target="{this}" name="x" value="63"/>
+        </mx:State>
+        <mx:State name="{ PromotionThumbnailPM.RIGHT_ON_STAGE }">
+            <mx:SetProperty target="{this}" name="height" value="32"/>
+             <mx:SetProperty target="{this}" name="x" value="126"/>
+        </mx:State>
+        <mx:State name="{ PromotionThumbnailPM.RIGHT_OFF_STAGE }">
+            <mx:SetProperty target="{this}" name="height" value="21"/>
+             <mx:SetProperty target="{this}" name="x" value="189"/>
+
+        </mx:State>
+    </mx:states>
+
+	 <mx:transitions>
+
+        <mx:Transition
+
+        	fromState="*"
+        	toState="*">
+            <mx:Parallel
+            	id="t1"
+
+            	targets="{[this]}">
+                <mx:Move
+                	duration="400"/>
+                <mx:Resize
+                	duration="400"/>
+            </mx:Parallel>
+        </mx:Transition>
+
+       <mx:Transition
+	 		fromState="{ PromotionThumbnailPM.LEFT_OFF_STAGE }"
+	 		toState="{ PromotionThumbnailPM.RIGHT_OFF_STAGE }" >
+	 		<mx:Move
+	 			effectStart="trace('move from left incoming to right incoming of 0 started')"
+	 			duration="0"/>
+	 	</mx:Transition>
+	 	<mx:Transition
+	 		fromState="{ PromotionThumbnailPM.RIGHT_OFF_STAGE }"
+	 		toState="{ PromotionThumbnailPM.LEFT_OFF_STAGE }" >
+	 			<mx:Move
+	 			effectStart="trace('move from right incoming to left incoming of 0 started')"
+	 			duration="0"/>
+	 	</mx:Transition>
+
+
+	</mx:transitions>
+
+
+
+</mx:Canvas>

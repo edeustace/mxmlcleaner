@@ -1,0 +1,44 @@
+/* 
+    Document   : HinduSample
+    Created on : 16-Mar-2009, 20:24:39
+    Author     : eeustace
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+.hinduTab,
+.hinduFirstTab
+{
+	up-skin: ClassReference("ds.hindu.common.view.skins.tabs.CommonTabSkin");
+	down-skin: ClassReference("ds.hindu.common.view.skins.tabs.CommonTabSkin");
+	over-skin: ClassReference("ds.hindu.common.view.skins.tabs.CommonTabSkin");
+	selected-up-skin: ClassReference("ds.hindu.common.view.skins.tabs.CommonTabSkin");
+	selected-down-skin: ClassReference("ds.hindu.common.view.skins.tabs.CommonTabSkin");
+	selected-over-skin: ClassReference("ds.hindu.common.view.skins.tabs.CommonTabSkin");
+	deselectedLineColor: #8E8F50;
+	deselectedRightLineThickness: 1;
+	deselectedLeftLineThickness: 1;
+	barCornerDif: 4;
+
+	backgroundColor: #FDFDA3;
+	font-family: SignaColumn-Black;
+    font-size: 10;
+    color: #000000;
+    cornerRadius: 0;
+}
+.hinduFirstTab
+{
+	deselectedLeftLineThickness: 0;
+}
+
+.hinduSelectedTab
+{
+	backgroundColor: #FDFDA3;
+	color: #000000;
+}
+

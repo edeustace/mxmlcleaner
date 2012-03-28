@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:mxml="flicc.factory.mxml.*"
+	xmlns:background="com.test.common.view.background.*"
+	xmlns:fliccext="com.adobe.fliccext.*"
+	xmlns:ioc="com.test.core.model.ioc.*"
+	xmlns:loaders="com.test.common.loaders.*"
+	xmlns:lotto="com.test.lotto.view.*"
+	xmlns:urlkit="urlkit.rules.*"
+	addedToStage="initMouseHandler()"
+	backgroundAlpha="0"
+	backgroundImage="null"
+	creationComplete="main()"
+	frameRate="25"
+	height="100%"
+	historyManagementEnabled="false"
+	horizontalAlign="center"
+	horizontalScrollPolicy="auto"
+	implements="com.test.printing.IPrintOutputHolder"
+	initialize="init()"
+	layout="vertical"
+	width="100%">
+
+
+	
+	<mx:Script>
+		<![CDATA[
+			import com.adobe.util.DisplayObjectIdentifier;
+			import com.adobe.util.mousewheel.MouseWheelEnabler;
+
+			import com.test.common.loaders.events.ViewLoadingStateEventCategories;
+			import com.test.common.model.constants.TestRegions;
+			import com.test.common.model.pm.regions.validator.RegionValidator;
+			import com.test.common.model.task.ITask;
+			import com.test.common.model.task.LoadStyleTask;
+			import com.test.common.model.task.LoadTextFileTask;
+			import com.test.common.model.task.LoadTrackingConfigurationTask;
+			import com.test.common.model.task.RefreshStylesTask;
+			import com.test.common.model.task.TaskRunner;
+			import com.test.common.model.tracking.RealActionSource;
+			import com.test.common.model.tracking.TrackingManager;
+			import com.test.common.nav.NavigationManager;
+			import com.test.common.nav.NavigationModel;
+			import com.test.common.util.DSAlert;
+			import com.test.lotto.model.constants.LottoSubRegionConstants;
+			import com.test.util.LogUtil;
+
+			import flash.utils.getTimer;
+
+			import mx.core.Container;
+			import mx.logging.ILogger;
+
+			import urlkit.rules.UrlBaseRule;
+
+			private static const APPLICATION_READY_TO_SHOW : String = "applicationReadyToShow";
+
+			private var log : ILogger;
+
+			private var startTime : int;
+
+			[Bindable]
+			private var navigationModel : NavigationModel;
+
+			private function addLoadStyleTasks(taskRunner : TaskRunner) : void
+			{
+				taskRunner.addTask(new LoadStyleTask("fontsstyles.swf"));
+				taskRunner.addTask(new LoadStyleTask("textstyles.swf"));
+				taskRunner.addTask(new LoadStyleTask("commonstyles.swf"));
+				taskRunner.addTask(new LoadStyleTask("lottostyles.swf"));
+				taskRunner.addTask(new LoadStyleTask("hindustyles.swf"));
+				taskRunner.addTask(new RefreshStylesTask());
+			}
+
+
+			private function init() : void
+			{
+				initLogging();
+			}
+
+			private function initMouseHandler() : void
+			{
+				MouseWheelEnabler.init(stage);
+			}
+
+			private function main() : void
+			{
+				
+			}
+
+			private function initSingletons() : void
+			{
+				
+			}
+
+			private function initNavigation() : void
+			{
+				NavigationManager;
+				RegionValidator;
+				TestRegions;
+				LottoSubRegionConstants;
+			}
+
+			private function initLogging() : void
+			{
+				LogUtil;
+			}
+
+			private function loadConfigurationFiles() : void
+			{
+				TaskRunner;
+				Event;
+			}
+
+
+
+			private function loadConfigurationFilesComplete(event : Event) : void
+			{
+				
+			}
+
+			private function createLoadBuildNumberTask() : ITask
+			{
+				LoadTextFileTask;
+			}
+
+			private function loadBuildNumberComplete(event : Event) : void
+			{
+				
+			}
+
+			CONFIG::debug
+
+			private function initDisplayObjectIdentifier(buildNumber : String) : void
+			{
+				DisplayObjectIdentifier;
+				ContextMenuItem;
+				Capabilities;
+			}
+			CONFIG::release
+
+			private function initDisplayObjectIdentifier(buildNumber : String) : void
+			{
+			}
+
+			private function createLoadTrackingConfigurationTask() : ITask
+			{
+				String;
+				Application;
+				LoadTrackingConfigurationTask;
+				Event;;
+			}
+
+			private function loadTrackingConfigurationComplete(event : Event) : void
+			{
+				LoadTrackingConfigurationTask;
+				Error;
+			}
+
+			private function get trackingManager() : TrackingManager
+			{
+				TrackingManager;
+			}
+
+			private function initTracking(data : XML) : void
+			{
+				ClassFactory;
+				RealActionSource;
+				UrlBaseRule;;
+			}
+
+			private function trackPage(event : Event) : void
+			{
+				DSAlert.
+			}
+
+			public function getPrintOutputHolder() : Container
+			{
+				return printOutput;
+			}
+
+		]]>
+	</mx:Script>
+
+	<mxml:FliccEventFactoryListener>
+		<fliccext:MetaDataMxmlObjectFactory id="objectFactory">
+			<fliccext:config>
+				<ioc:CoreConfig/>
+			</fliccext:config>
+		</fliccext:MetaDataMxmlObjectFactory>
+	</mxml:FliccEventFactoryListener>
+
+	<urlkit:FlexBrowserManagerAdapter applicationState="{ navigationModel }"/>
+
+
+	<loaders:ViewLoaderManager>
+		<loaders:viewPolicies>
+			<loaders:ViewLoaderPolicy targetCategory="{ ViewLoadingStateEventCategories.APPLICATION_CONTENT }"
+				loaderHandler="com.test.common.loaders.handlers.InvisibleWhileLoadingHandler"/>
+			<loaders:ViewLoaderPolicy targetCategory="{ ViewLoadingStateEventCategories.SWF_CONTENT }"
+				loaderHandler="com.test.common.loaders.handlers.ShowAndPlaySWFHandler"/>
+			<loaders:ViewLoaderPolicy targetCategory="{ ViewLoadingStateEventCategories.BODY_TEXT }"
+				loaderHandler="com.test.common.loaders.handlers.InvisibleWhileLoadingHandler"/>
+		</loaders:viewPolicies>
+	</loaders:ViewLoaderManager>
+
+	<mx:states>
+		<mx:State name="applicationReadyToShow">
+			<mx:RemoveChild target="{ loadingStylesContainer }"/>
+			<mx:AddChild>
+				<!-- We need a invisible container for printing.
+					 Unfortunately it cannot be set to visible=false or something similar
+					 because this interferes with the printing output.
+					 So the solution is to place it inside another canvas and set the x, y to -something
+					 so that won't be visible for the user.
+				-->
+				<mx:Canvas includeInLayout="false">
+					<mx:Canvas id="printOutput"
+						x="-1000"
+						y="-1000"/>
+				</mx:Canvas>
+
+			</mx:AddChild>
+			<!--
+				 <mx:AddChild>
+				 <background:TestBackgroundView
+				 id="background"/>
+				 </mx:AddChild>
+			-->
+			<mx:AddChild>
+				<lotto:LottoRegionView width="934"
+					id="lottoView"/>
+			</mx:AddChild>
+
+		</mx:State>
+	</mx:states>
+	<mx:Canvas id="loadingStylesContainer"
+		width="100%"
+		height="100%">
+		<mx:Label text="IndlÃ¦ser siden..."
+			horizontalCenter="0"
+			verticalCenter="0"/>
+	</mx:Canvas>
+</mx:Application>

@@ -1,0 +1,18 @@
+<regions:BasePlayNowView 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="init()" 
+	xmlns:regions="com.test.common.view.regions.*">
+
+	<mx:Metadata>
+        [ResourceBundle("LottoPlayNow")]
+    </mx:Metadata> 
+    
+	<mx:Script>
+		<![CDATA[
+			
+			private static const BUNDLE : String = "PlayNow";
+			
+			
+		]]>
+	</mx:Script>
+	</regions:BasePlayNowView>

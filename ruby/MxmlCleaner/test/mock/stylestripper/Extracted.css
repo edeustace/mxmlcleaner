@@ -1,0 +1,605 @@
+/*from: flex/ds/hindu/common/view/buttons/DSGreyButton.mxml*/
+
+		.dsHinduViewStyledButtonsDSGreyButton
+		{
+			cornerRadius: 6;
+			paddingLeft: 2;
+			paddingRight: 2;
+			fillAlphas: 0, 1, 0, 1;
+			fillColors: #ffffff, #c6c6c6, #ffffff, #c6c6c6;
+			color: #656565;
+			textRollOverColor: #656565;
+			textSelectedColor: #656565;
+			borderColor: #b9b9b9;
+			themeColor: #656565;
+		}
+	
+/*from: flex/ds/hindu/common/view/popups/DsPopup.mxml*/
+
+ 		.dsPopupDefaultStyle
+		{
+			/* The shadow doesn't appear without the border. */
+			border-style: solid;	
+			/* 
+				Because we don't want the border to be visible
+				we set its thickness to zero.
+			*/
+			border-thickness: 0;
+			
+			drop-shadow-enabled: true;
+			shadow-direction: left;
+			corner-radius: 5;
+			vertical-gap: 0;
+		}
+	
+/*from: flex/ds/hindu/common/view/popups/DsTipsTabsPopup.mxml*/
+
+			/* Container */
+		.container
+		{
+			border-style: solid;
+			border-thickness: 0;
+			fill-colors: #FFFFFF, #d8d8d8;
+			fill-alphas: 1;
+			border-skin: ClassReference("ds.hindu.common.view.skins.SimpleGradientBorder"); 
+			content-area-top-spacing: 20;
+			
+			titleBarStyleName: dsPopupTitleBarStyle;
+			titleLabelStyleName: dsPopupsTitleLabelStyle;
+			textAreaStyleName: dsPopupTextAreaStyle;
+			statusBarStyleName: dsPopupStatusBarStyle;
+			okButtonStyleName: dsPopupOkButtonStyle;
+			closeButtonStyleName: dsPopupCloseButtonStyle;
+			top-corner-radius: 5;
+			drop-shadow-enabled: true;
+			
+		
+		}
+	
+	
+		/* Title bar */
+		.dsPopupTitleBarStyle
+		{
+			border-style: solid;
+			border-thickness: 0;
+			fill-colors: #ffcc33, #e4af01;
+			border-skin: ClassReference("ds.hindu.common.view.skins.SimpleGradientBorder"); 
+			top-corner-radius: 5;
+			bottom-corner-radius: 0;
+			header-height: 41;
+		}
+		
+		/* Title bar label */
+		.dsPopupsTitleLabelStyle
+		{
+			fontFamily: "SignaColumn-Bold";
+		    fontSize: 14;
+		    color: #286653;
+			padding-left: 10;
+		}
+		
+		/* Text area */
+		.dsPopupTextAreaStyle
+		{
+			border-style:none;
+			/* background-fill-colors: #FCFCFC, #E8E8E8; */
+			background-alpha: 0;
+			/* border-skin: ClassReference("ds.hindu.common.view.skins.SimpleGradientBorder"); */
+			vertical-scroll-bar-style-name: dsPopupTextAreaVScrollbarStyle;
+			horizontal-scroll-bar-style-name: dsPopupTextAreaHScrollbarStyle;
+			padding-left: 10;
+			padding-right: 10;
+			fontFamily: "SignaColumn-Book";
+		    fontSize: 11;
+		}
+		
+		.dsPopupTextAreaHScrollbarStyle,
+		.dsPopupTextAreaVScrollbarStyle {
+			thumbSkin: ClassReference("ds.hindu.common.view.skins.scrollbar.DSScrollbarSkin");
+            trackSkin: ClassReference("ds.hindu.common.view.skins.scrollbar.DSScrollbarSkin");    
+            upArrowSkin: ClassReference("ds.hindu.common.view.skins.scrollbar.DSScrollbarSkin");
+            downArrowSkin: ClassReference("ds.hindu.common.view.skins.scrollbar.DSScrollbarSkin");
+            drop-shadow-enabled: true;
+			drop-shadow-distance: 1;
+		}
+		
+		/* Status bar */
+		.dsPopupStatusBarStyle
+		{
+			border-style:solid;
+			border-color: #D8D8D8;
+			border-thickness: 1;
+			border-sides: top;
+			background-fill-colors: #F7F7F7, #E5E5E5;
+			border-skin: ClassReference("ds.hindu.common.view.skins.SimpleGradientBorder");  
+			top-corner-radius: 0;
+			bottom-corner-radius: 5;
+			sfontFamily: "SignaColumn-Book";
+		    fontSize: 11;
+		}
+		
+		/* OK button */
+		.dsPopupOkButtonStyle
+		{
+			color: #FFFFFF;
+/*			skin: ClassReference("redConfirmButtonSkin");  */
+			padding-left: 10;
+			padding-right: 10;
+			background-gradient-colors: #71c175, #007e43;
+			
+		}	
+		
+		/* Close button */
+		.dsPopupCloseButtonStyle
+		{
+			/* skin: ClassReference("closeButtonSkin");  */
+		}
+	
+/*from: flex/ds/hindu/common/view/regions/BasePlayNowView.mxml*/
+
+		.dsHinduViewStyledLabelsLottoPlayNow
+		{
+			fontFamily: "SignaColumn-Book";
+		    fontSize: 18;
+		    color: #FFFFFF;
+      
+		}
+	
+/*from: flex/ds/hindu/common/view/TransparentBackgroundVBox.mxml*/
+
+		
+        /* .testeGradiente{
+            fillColors:#ffffff, #000000;
+            fillAlphas: .17,.4;
+        } */
+        
+        .dsHinduCommonViewTransparentBackgroundVBox
+		{
+			headerHeight: 25;
+		   	border-skin: ClassReference("ds.hindu.common.view.skins.panel.SimpleGradientPanelSkin");
+			borderStyle: solid;
+			border-thickness:0;
+		   	fill-colors: #ffffff, #ffffff; 
+		   	fill-alphas: .35,.0;
+		   	borderThicknessLeft: 0;
+		   	borderThicknessTop: 0;
+		   	borderThicknessBottom: 0;
+		   	borderThicknessRight: 0;
+		   	dropShadowEnabled: false;
+		   	roundedBottomCorners: true;
+		   	cornerRadius: 15;
+		   	
+		}
+/*from: flex/ds/hindu/dstv/view/VideoGui.mxml*/
+
+		.dsHinduDSTVViewVideoGuiBackground
+		{
+		   	border-skin: ClassReference("ds.hindu.common.view.skins.panel.SimpleGradientPanelSkin");
+			borderStyle: solid;
+			border-thickness:0;
+		   	fill-colors: #5c5c5c, #1c1c1c; 
+		   	fill-alphas: 1,1;
+		}
+		
+		.dsHinduDSTVViewVideoGuiVolumeSliderBackground
+		{
+		   	border-skin: ClassReference("ds.hindu.common.view.skins.panel.SimpleGradientPanelSkin");
+			borderStyle: solid;
+			border-thickness: 0;
+			corner-radius: 8;
+			bottom-corner-radius: 0.1;
+		   	fill-colors: #a4a4a4, #5c5c5c; 
+		   	fill-alphas: 1,1;
+		}
+		
+		.dsHinduDSTVViewVideoGuiVolumeSlider 
+		{
+			thumbSkin: ClassReference("ds.hindu.common.view.skins.scrollbar.DSScrollbarSkin");
+            drop-shadow-enabled: true;
+			drop-shadow-distance: 1;
+			scrollbar-width: 20;
+		}
+		
+	
+/*from: flex/ds/hindu/frontpage/view/BrandMenu.mxml*/
+
+		.brandButtonBar {
+			corner-radius: 8;
+			horizontal-gap: 0;
+			vertical-gab: 0;
+			separator-width: 0;
+			padding-left:0;
+			padding-right:0;
+			padding-bottom:0;
+			padding-top:0;
+			link-button-style-name: brandButton;
+			inner-radius:0;
+			border-thickness:0;
+			indicator-gap:0;
+			label-offset:0;
+			label-width:0;
+			left-icon-gap:0;
+			right-icon-gap:0;
+			text-area-padding-left:0;
+			text-area-padding-right:0;
+			text-indent:0;
+			text-field-width:0;
+			top-buttons-padding-right:0;
+			horizontal-align:left;
+			border-thickness-left:0;
+			border-thickness-right:0;
+			font-size:0;
+			arrow-button-width:0;
+background-size:0;
+			
+		}
+		
+		.brandButton {
+			border-style:solid;
+			border-thickness:2;
+			corner-radius: 8;
+			horizontal-gap: 0;
+			vertical-gab: 0;
+			separator-width: 0;
+			padding-left:0;
+			padding-right:0;
+			padding-bottom:0;
+			padding-top:0;
+			inner-radius:0;
+			
+			indicator-gap:0;
+			label-offset:0;
+			label-width:0;
+			left-icon-gap:0;
+			right-icon-gap:0;
+			text-area-padding-left:0;
+			text-area-padding-right:0;
+			text-indent:0;
+			text-field-width:0;
+			top-buttons-padding-right:0;
+			adjusted-radius:0;
+			border-thickness-left:0;
+			border-thickness-right:0;
+		}
+		
+		.brandWindows {
+			corner-radius: 8;
+			border-style:solid;  
+			border-thickness:0;
+			
+	
+		}
+		
+		
+				.lotto {
+			background-color: #c50005;
+			
+			
+		}
+		
+		.zezam {
+			background-color: #678aae;
+		}
+		
+		.dantoto {
+			background-color: #dc5f11;
+		}
+		
+		.oddset {
+			background-color: #003e99;
+		}
+		
+		.tips {
+			background-color: #009a60;
+		}
+		
+		.eurojackpot {
+			background-color: #fa8c00;
+		}
+		
+		.quick {
+			background-color: #7f4488;
+	 
+		}
+		
+		.keno {
+			background-color: #0092cf;	
+		}
+		
+		.bingo {
+			background-color: #8dba1f;
+		
+		}
+		
+		.boxen {
+			background-color: #961937;
+		
+		}
+		
+		
+		.lotto, 
+		.zezam, 
+		.dantoto,
+		.oddset, 
+		.tips, 
+		.eurojackpot, 
+		.quick, 
+		.keno,
+		.bingo, 
+		.boxen {
+			corner-radius:4;
+			 borderStyle:solid;   
+			border-thickness:0; 
+		}
+		
+		.menuBarStyle{ 
+            padding-top:0; 
+            padding-left:0;
+            padding-right:0; 
+            padding-bottom:0; 
+            horizontal-gap:0; 
+            border-thickness:0;
+			
+		}
+		.viewPanel{
+			
+		}
+		
+	
+/*from: flex/ds/hindu/frontpage/view/FrontpageCampaignsView.mxml*/
+
+		.boxStyle{
+		
+		corner-radius:8;    
+		border-style:solid;    
+		border-thickness:2;
+		border-color:#ffffff; 
+		height:225; 
+		width:214;
+		vertical-scroll-policy:off; 
+			horizontal-scroll-policy:off; 
+		}
+	
+/*from: flex/ds/hindu/frontpage/view/news/labels/NewsBodyText.mxml*/
+
+		.dsHinduViewStyledLabelsNewsBodyText
+		{
+		    fontFamily: "SignaColumn-Book";
+		    fontSize: 11;
+		    color: #286653;
+		}
+	
+/*from: flex/ds/hindu/frontpage/view/news/labels/NewsCategoryText.mxml*/
+
+		.dsHinduViewStyledLabelsNewsCategoryText
+		{
+		    fontFamily: "SignaColumn-Black";
+		    fontSize: 9;
+		    color: #286653;
+		}
+
+		
+	
+/*from: flex/ds/hindu/frontpage/view/news/labels/NewsDateText.mxml*/
+
+		.dsHinduViewStyledLabelsNewsBodyText
+		{
+		    fontFamily: "SignaColumn-Book";
+		    fontSize: 9;
+		    color: #286653;
+		}
+
+		
+	
+/*from: flex/ds/hindu/frontpage/view/news/labels/NewsHeaderText.mxml*/
+
+		.dsHinduViewStyledLabelsNewsHeaderText
+		{
+		    fontFamily: "SignaColumn-Black";
+		    fontSize: 15;
+		    color: #286653;
+		}
+		
+	
+/*from: flex/ds/hindu/frontpage/view/news/labels/NewsLinkText.mxml*/
+
+		.dsHinduViewStyledLabelsNewsLinkText
+		{
+		    fontFamily: "SignaColumn-Bold";
+		    fontSize: 11;
+		    color: #286653;
+		}
+	
+/*from: flex/ds/hindu/frontpage/view/news/labels/NewsTitleText.mxml*/
+
+		.dsHinduViewStyledLabelsNewsTitleText
+		{
+		    fontFamily: "SignaColumn-Bold";
+		    fontSize: 12;
+		    color: #286653;
+		}
+	
+/*from: flex/ds/hindu/frontpage/view/news/NewsListView.mxml*/
+
+		.dsHinduViewComponentsNewsNewsListViewLinkButton 
+		{
+			font-family : "SigmaColumn-Book";
+			font-size : 11;	
+			color : #286653;
+			text-roll-over-color : #4d4d4d;
+			font-weight : normal;
+			text-decoration : underline;
+			over-skin : ClassReference("ds.hindu.common.view.skins.button.DSInvisibleSkin");
+			down-skin : ClassReference("ds.hindu.common.view.skins.button.DSInvisibleSkin"); 
+		}
+	
+/*from: flex/ds/hindu/frontpage/view/news/NewsTeaserView.mxml*/
+
+		.dsHinduViewComponentsNewsNewsTeaserViewBodyText
+		{
+		    fontFamily: "SignaColumn-Book";
+		    fontSize: 11;
+		    color: #286653;
+		}
+		.dsHinduViewComponentsNewsNewsTeaserViewMoreButton
+		{
+		    font-family: "SignaColumn-Book";
+		    font-weight : normal;
+		    font-size: 11;
+		    color: #286653;
+		   
+		    icon : ClassReference("ds.hindu.frontpage.view.news.skin.AnimatedIconSkin");
+		    icon-up-skin : Embed('/assets/embedded/secondary_arrow_btn.swf#secondary_btn_ds_green'); 
+		    icon-over-skin : Embed('/assets/embedded/secondary_arrow_btn.swf#secondary_btn_over');
+		    skin : ClassReference("mx.skins.ProgrammaticSkin");
+		}
+
+	
+/*from: flex/ds/hindu/lotto/view/LottoPlayNowView.mxml*/
+
+		.dsHinduViewStyledLabelsLottoPlayNow
+		{
+			fontFamily: "SignaColumn-Bold";
+		    fontSize: 15;
+		    color: #FFFFFF;
+      
+		}
+		.PlayNowViewMenuBarStyle{ 
+            padding-top:10; 
+            padding-left:5;
+            padding-right:5; 
+            padding-bottom:10; 
+            horizontal-gap:8; 
+            border-thickness:0;
+		}
+		.PlayNowbuttonStyle{
+			
+		}
+	
+/*from: flex/ds/hindu/lotto/view/news/labels/LottoNewsBodyText.mxml*/
+
+		.dsHinduViewStyledLabelsLottoNewsBodyText
+		{
+		    fontFamily: "SignaColumn-Book";
+		    fontSize: 11;
+		    color: #286653;
+		}
+	
+/*from: flex/ds/hindu/lotto/view/news/labels/LottoNewsCategoryText.mxml*/
+
+		.dsHinduViewStyledLabelsLottoNewsCategoryText
+		{
+		    fontFamily: "SignaColumn-Book";
+		    fontSize: 9;
+		    color: #ffffff;
+		    padding-left: 6;
+		}
+
+		
+	
+/*from: flex/ds/hindu/lotto/view/news/labels/LottoNewsDateText.mxml*/
+
+		.dsHinduViewStyledLabelsLottoNewsBodyText
+		{
+		    fontFamily: "SignaColumn-Book";
+		    fontSize: 9;
+		    color: #ffffff;
+		}
+
+		
+	
+/*from: flex/ds/hindu/lotto/view/news/labels/LottoNewsHeaderText.mxml*/
+
+		.dsHinduViewStyledLabelsLottoNewsHeaderText
+		{
+		    fontFamily: "SignaColumn-Black";
+		    fontSize: 17;
+		    color: #ffff99;
+		    padding-left: 4;
+		}
+		
+	
+/*from: flex/ds/hindu/lotto/view/news/labels/LottoNewsLinkText.mxml*/
+
+		.dsHinduViewStyledLabelsLottoNewsLinkText
+		{
+		    fontFamily: "SignaColumn-Bold";
+		    fontSize: 11;
+		    color: #286653;
+		}
+	
+/*from: flex/ds/hindu/lotto/view/news/labels/LottoNewsTitleText.mxml*/
+
+		.dsHinduViewStyledLabelsLottoNewsTitleText
+		{
+		    fontFamily: "SignaColumn-Bold";
+		    fontSize: 12;
+		    color: #ffffff;
+		}
+	
+/*from: flex/ds/hindu/lotto/view/news/LottoNewsTeaserView.mxml*/
+		
+	.dsHinduViewComponentsLottoNewsNewsTeaserOuterBox
+		{
+			background-alpha: 0;
+			fill-alphas: 0.8,0;
+			fill-colors: #b90b0c, #b90b0c;
+		}
+	
+	.dsHinduViewComponentsLottoNewsNewsTeaserViewBodyText
+		{
+		    fontFamily: "SignaColumn-Book";
+		    fontSize: 11;
+		    color: #ffffff;
+		    padding-left: 7;
+		}
+	.dsHinduViewComponentsLottoNewsNewsTeaserViewMoreButton
+		{
+		    font-family: "SignaColumn-Bold";
+		    font-weight : bold;
+		    font-size: 12;
+		    color: #ffffff;
+		}
+
+	
+/*from: flex/HCComponentLibrary.mxml*/
+
+	
+		.doc {
+			color : #0000bb;
+			font-family : "Courier New";
+			font-size : 12;
+		}
+		.docBorderedBox {
+			border-style : solid;
+			border-color : #000000;
+			border-thickness : 1;
+			padding-bottom : 5; 
+			padding-left : 5;
+			padding-right : 5;
+			padding-top : 5;
+		}
+	
+/*from: flex/TestCrossSalesCampaign.mxml*/
+
+		.regionLabel 
+		{
+			font-family : "SignaColumn-Black";
+			font-weight : bold;
+			font-size : 14;
+		}
+		
+	
+/*from: flex/TestSimpleGradientPanelSkin.mxml*/
+
+		.testeGradiente
+		{
+			headerHeight: 25;
+		   	border-skin: ClassReference("ds.hindu.common.view.skins.panel.SimpleGradientPanelSkin");
+		   	fill-colors: #ff0000, #ffffff; 
+		   	fill-alphas: .35,0.0;
+		   	roundedBottomCorners: true;
+		   	cornerRadius: 15;
+		   	background-alpha: 0;
+		}
+	
